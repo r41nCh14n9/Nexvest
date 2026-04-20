@@ -68,8 +68,9 @@ Harness 中的部署環境定義，例如 `dev`、`test`、`prod`。
 
 ## 0.5 建議實作順序
 
-1. 先完成 `step0` 的概念理解
-2. 用 `step1` 建置最簡單的 Hello World 環境
-3. 用 `step2` 把 infra、部署、外部系統連接補齊
-4. 用 `step3` 進行專案功能與單元測試開發
-5. 用 `step4` 做整合測試與完整流程驗證
+1. 先完成 `step0` 的概念理解與目標（Harness + AI 整合）
+2. 在 `step1` 建置 Harness 專案骨架與最簡單的 Hello World Pipeline，確認 pipelines 可執行
+3. 在 `step2` 串接 AI model（例如 Ollama）作為 Connector，並在 Pipeline 中加入 AI 任務測試
+4. 在 `step3` 補齊 Infrastructure、Delegate 與外部系統連接，部署至 `dev` 環境
+5. 在 `step4` 進行專案功能開發與單元測試，並將測試整合到 Pipeline
+6. 使用 CI/CD 執行整合測試與完整流程驗證，回饋並優化 Pipeline 與 Policy

@@ -1,202 +1,88 @@
-﻿# Step 2: Infra / 部署與外部系統設定
+---
+# Step 2: 串接 AI Model（Ollama）並在 Pipeline 中測試 AI 任務
 
-本階段將專注於基礎設施、部署設定與外部系統整合，讓 Hello World 專案能在多環境中運行。
-
+**文檔類型**: 開發指南
+**版本**: 1.0
+**編制日期**: 2026-04-20
 ---
 
-## 2.1 Infra 與外部系統概覽
+## 目標
 
-此階段內容包括：
+- 把 AI model（以 Ollama 為例）作為外部服務接入 Harness（透過 Connector / HTTP API）
+- 在 Pipeline 中新增一個 AI 任務步驟，能呼叫模型並驗證回應
 
-- Connectors 設定
-- Delegate 與執行代理
-- Environment / Infrastructure 定義
-- Docker Registry、Kubernetes、SonarQube 等外部系統
-- 部署流程與 Kubernetes manifests
+## 前置需求
 
----
+- 已有可使用的 Ollama endpoint（本地執行或網路可達）
+- 有權限在 Harness 建立 Connector（或使用 Secrets 存放 API key）
+- 熟悉基本 HTTP 呼叫與 JSON
 
-## 2.2 Connectors 設定
+## 建議架構
 
-在 Harness 中建立以下 Connectors：
+- 使用 Harness 的 Generic HTTP Connector（或自訂 Connector）保存 Ollama endpoint 與憑證
+- Pipeline 的 AI 步驟以 Shell/Script/HTTP 或自訂 Task 呼叫該 endpoint，並將回傳結果用於後續步驟
 
-### Git Connector
-- Type: GIT
-- URL: `https://gitness.local/nexvest/nexvest-core`
-- Auth: SSH
+## 範例：建立 Connector（概念）
 
-### Docker Registry Connector
-- Type: DOCKER_REGISTRY
-- Provider: Docker Hub 或 Private Registry
-- URL: `https://docker.io`
-- Auth: 帳號密碼或 token
+- 在 Harness UI 中：Project → Connectors → New Connector → 選擇 `HTTP` 或 `Generic API`
+- 填寫：Endpoint（例如 `http://ollama.local:11434/v1/`）、Auth（若有）
 
-### Kubernetes Connector
-- Type: KUBERNETES
-- Master URL: `https://kubernetes.default.svc.cluster.local`
-- Auth: Service Account Token
-
-### Ollama Connector
-- Type: HTTP
-- URL: `http://host.docker.internal:11434`
-- Auth: NONE
-
----
-
-## 2.3 Delegate 設定
-
-Delegate 是實際跑 Step 的執行節點，通常部署在你的本地或遠端叢集。
+## 範例：Pipeline 中的 AI 呼叫步驟（使用 curl）
 
 ```yaml
-# delegate-config.yaml
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: harness-delegate
-  namespace: harness-delegate-ng
-data:
-  delegate.yaml: |
-    accountId: YOUR_ACCOUNT_ID
-    delegateId: nexvest-delegate-1
-    delegateName: nexvest-local-delegate
-    delegateToken: YOUR_DELEGATE_TOKEN
-    managerHost: https://app.harness.io
-    grpc:
-      enabled: true
-      port: 9881
+# pipelines/hello-with-ai-pipeline.yaml
+pipeline:
+  name: Hello + AI
+  identifier: hello_ai_pipeline
+  stages:
+    - stage:
+        name: AI Stage
+        identifier: ai_stage
+        type: Custom
+        spec:
+          execution:
+            steps:
+              - step:
+                  type: ShellScript
+                  name: Call Ollama
+                  identifier: call_ollama
+                  spec:
+                    shell: Bash
+                    onDelegate: true
+                    command: |
+                      # 使用已在 Connector/Secrets 設定的環境變數
+                      set -e
+                      prompt='Hello, please respond with a short greeting.'
+                      resp=$(curl -s -X POST "http://$OLLAMA_HOST:11434/v1/generate" \
+                        -H "Content-Type: application/json" \
+                        -d '{"model":"gpt-4o-mini","prompt":"'$prompt'","max_tokens":50}')
+                      echo "AI response: $resp"
+
 ```
 
----
+說明：
+- `$OLLAMA_HOST` 可由 Delegate 或步驟的環境變數注入（使用 Harness Secrets/Variables）
+- 若你的 Ollama endpoint API 不同，請依實際 API 調整 `curl` payload
 
-## 2.4 Environments / Infrastructure 定義
+## 驗證步驟
 
-定義開發、測試、生產環境，並指定對應的 Infrastructure：
+1. 在 Harness 建立或匯入 `hello-with-ai-pipeline.yaml`。
+2. 設定好 Connector/Secrets，確保 Delegate 可連到 Ollama。
+3. Run Pipeline，於 Execution Logs 檢查 `Call Ollama` 步驟輸出，確認有合理回應。
 
-```yaml
-# .harness/environments.yaml
-apiVersion: harness.io/v1
-kind: Environment
-metadata:
-  name: nexvest-dev
-  namespace: default
-spec:
-  environmentType: NON_PROD
-  infrastructure:
-    - name: nexvest-dev-k8s
-      infrastructureType: KUBERNETES
-      spec:
-        connectorRef: nexvest-k8s-connector
-        namespace: nexvest-dev
+## 常見問題與排解
 
----
-apiVersion: harness.io/v1
-kind: Environment
-metadata:
-  name: nexvest-prod
-  namespace: default
-spec:
-  environmentType: PROD
-  infrastructure:
-    - name: nexvest-prod-k8s
-      infrastructureType: KUBERNETES
-      spec:
-        connectorRef: nexvest-prod-k8s-connector
-        namespace: nexvest-prod
-```
+- 連線失敗：檢查 Delegate 網路是否能 reach Ollama host（內網/防火牆問題）
+- 認證錯誤：確保 API Key/Token 存在於 Harness Secrets，且步驟使用該 Secrets
+- 回應格式不正確：查看 Ollama 的 API 規格，調整 `Content-Type` 或 body
 
----
+## 延伸
 
-## 2.5 部署設定與 Kubernetes Manifest
+- 將 AI 步驟的輸出解析後作為下一個步驟的輸入（例如自動產生測試、生成部署參數）
+- 把 Ollama 包裝成一個可重用的 Template/Step，方便在其他 Pipeline 使用
 
-### Dockerfile
+## Changelog
 
-```dockerfile
-FROM maven:3.9-eclipse-temurin-17 AS builder
-WORKDIR /app
-COPY . .
-RUN mvn clean package -DskipTests
-
-FROM eclipse-temurin:17-jre-alpine
-WORKDIR /app
-COPY --from=builder /app/target/*.jar app.jar
-EXPOSE 8080
-ENTRYPOINT ["java", "-jar", "app.jar"]
-```
-
-### Kubernetes
-
-```yaml
-# k8s/dev/deployment.yaml
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: nexvest-app
-  namespace: nexvest-dev
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: nexvest-app
-  template:
-    metadata:
-      labels:
-        app: nexvest-app
-    spec:
-      containers:
-        - name: nexvest-app
-          image: nexvest:latest
-          ports:
-            - containerPort: 8080
-          livenessProbe:
-            httpGet:
-              path: /actuator/health
-              port: 8080
-            initialDelaySeconds: 30
-            periodSeconds: 10
-```
-
-```yaml
-# k8s/dev/service.yaml
-apiVersion: v1
-kind: Service
-metadata:
-  name: nexvest-service
-  namespace: nexvest-dev
-spec:
-  selector:
-    app: nexvest-app
-  ports:
-    - protocol: TCP
-      port: 80
-      targetPort: 8080
-```
-
----
-
-## 2.6 外部系統整合
-
-### SonarQube
-
-```bash
-docker run -d \
-  --name sonarqube \
-  -p 9000:9000 \
-  sonarqube:latest
-```
-
-連到 `http://localhost:9000`，設定 `nexvest-core` 專案。
-
-### Prometheus / ELK
-
-若要後續監控，可先建立 Prometheus 或 ELK 堆棧，但這部分可放在更高階的 step2 或 step4。
-
----
-
-## 2.7 結論
-
-完成 step2 後，你應該已經具備：
-
-- Harness 與外部 Infra 的連接器設定
-- Delegate 與 Environment 的基礎結構
-- Docker/K8s 的部署配置
-- 主要外部系統（Git、Registry、Ollama、SonarQube）整合
+| 版本 | 日期 | 撰寫人 | 變更內容 |
+| --- | --- | --- | --- |
+| 1.0 | 2026-04-20 | Nexvest 團隊 | 初版：Ollama 串接與 Pipeline 範例 |

@@ -1,117 +1,122 @@
-﻿# Step 1: Hello World 架構建置
+---
+# Step 1: 建置 Harness 專案骨架與 Hello World Pipeline
 
-本階段建立最簡單的 Hello World 開發環境與 Harness Pipeline，驗證整體架構是否可用。
-
+**文檔類型**: 開發指南
+**版本**: 1.0
+**編制日期**: 2026-04-20
+**上次更新**: 2026-04-20
+**撰寫人員**: Nexvest 團隊
+**審核人員**: 
+**適用對象**: 開發者、DevOps、SRE
 ---
 
-## 1.1 環境概述
+## 目標
 
-此階段目標是讓你完成以下項目：
+本步驟透過實作一個最簡單的 Harness Pipeline（Hello World），讓你能：
 
-- Ollama 本地 AI 推理引擎啟動
-- Harness Gitness 初次部署
-- Harness 與 Ollama 連接
-- 簡單 Hello World 專案上線
-- 基本 Pipeline 執行成功
+- 理解 Harness 專案與 Pipeline 的基本構成
+- 確認 Connector 與 Repository 的串接流程
+- 驗證 Pipeline 可由 Harness 運行（手動或 CI 觸發）
 
----
+## 前置需求
 
-## 1.2 安裝與啟動 Ollama
+- 已有 Harness 帳號或存取權限（UI 或 API/CLI）
+- 有一個 Git repository（可為 GitHub/GitLab/Bitbucket）
+- 本機有基本工具：`git`、`bash`、`kubectl`（視需求）
+- 建議建立一個專案目錄，例如 `harness-sandbox` 來放置 YAML 與範例
 
-1. 下載並安裝 Ollama
-   - 參考 [Ollama 官網](https://ollama.com/)
-2. 啟動模型
-   ```bash
-   ollama run qwen2.5-coder:7b
-   ```
-3. 驗證 API
-   ```bash
-   curl http://localhost:11434/v1/models
-   ```
+## 檔案/目錄建議結構
 
----
-
-## 1.3 部署 Harness Gitness
-
-使用 Docker 來啟動 Harness Open Source：
-
-```bash
-mkdir -p ~/harness-data
-
-docker run -d \
-  -p 3000:3000 \
-  -v /var/run/docker.sock:/var/run/docker.sock \
-  -v ~/harness-data:/data \
-  --name harness-opensource \
-  harness/gitness
+```
+harness-sandbox/
+  ├─ pipelines/
+  │   └─ hello-world-pipeline.yaml
+  └─ README.md
 ```
 
-瀏覽器訪問 `http://localhost:3000`，完成管理員帳號註冊。
+## Hello World Pipeline 概念圖
 
----
+```mermaid
+flowchart TD
+  A[Start] --> B[Hello World Stage]
+  B --> C[End]
+```
 
-## 1.4 連接 Ollama
+## 範例：最簡單的 Pipeline YAML
 
-在 Harness UI 中進入 **Project Settings** > **Connectors**，新增 AI Provider：
+下方為一個簡易範例（示意用途，依你使用的 Harness 版本與 schema 可能要做少量調整）：
 
-- Type: OpenAI Compatible
-- Base URL: `http://host.docker.internal:11434/v1`
-- API Key: `dummy-key`
-- Model Name: `qwen2.5-coder:7b`
+```yaml
+# pipelines/hello-world-pipeline.yaml
+pipeline:
+  name: Hello World Pipeline
+  identifier: hello_world_pipeline
+  stages:
+    - stage:
+        name: Hello World Stage
+        identifier: hello_world_stage
+        type: Deployment
+        spec:
+          execution:
+            steps:
+              - step:
+                  type: ShellScript
+                  name: Print Hello
+                  identifier: print_hello
+                  spec:
+                    shell: Bash
+                    onDelegate: true
+                    command: |
+                      echo "Hello from Harness!"
 
-> 注意：Harness 在 Docker 裡運行，無法直接用 `localhost` 連到宿主機，因此要使用 `host.docker.internal`。
+```
 
----
+注意：不同 Harness 版本/安裝方式（Cloud vs On-prem）與 Provider 可能會有細節差異，請以你帳號下的 Pipeline Schema 為準。
 
-## 1.5 Hello World 專案與 Pipeline
+## 操作步驟（高階）
 
-建立一個最簡單的 Hello World 專案：
+1. 在本機建立專案資料夾並初始化 git：
 
-1. 在 Harness 中建立 repository
-2. 新增最簡單的 Java 程式
-   ```java
-   public class HelloWorld {
-     public static void main(String[] args) {
-       System.out.println("Hello, Nexvest!");
-     }
-   }
-   ```
-3. 建立 `.harness/build-pipeline.yaml`
-   ```yaml
-   version: 1
-   kind: pipeline
-   metadata:
-     name: helloworld-pipeline
-     identifier: helloworld_pipeline
-   spec:
-     stages:
-       - name: build
-         type: ci
-         spec:
-           steps:
-             - name: compile
-               type: run
-               spec:
-                 container: maven:3.9-eclipse-temurin-17
-                 script: |
-                   mvn clean package -DskipTests
-   ```
+```bash
+mkdir harness-sandbox
+cd harness-sandbox
+git init
+mkdir pipelines
+```
 
----
+2. 把上面的 `hello-world-pipeline.yaml` 儲存到 `pipelines/` 後，提交至你的遠端 repo：
 
-## 1.6 驗證步驟
+```bash
+git add pipelines/hello-world-pipeline.yaml
+git commit -m "Add Hello World pipeline"
+git remote add origin <your-repo-url>
+git push -u origin main
+```
 
-1. 在 Harness 中觸發 `helloworld-pipeline`
-2. 確認 `build` Stage 成功
-3. 若有錯誤，先檢查 Docker 容器網路與 Ollama 連線
+3. 在 Harness UI 中建立或設定一個 Project/Connector，連接你的 Git repository（或使用 Harness 的 GitOps 流程）。
 
----
+4. 從 Harness UI 匯入或建立新 Pipeline，選擇 YAML 檔案路徑 `pipelines/hello-world-pipeline.yaml`，並儲存。
 
-## 1.7 結論
+5. 手動執行 Pipeline（Run），觀察執行結果與 `Print Hello` 步驟輸出是否顯示 `Hello from Harness!`。
 
-完成 step1 後，你應該已經具備：
+## 驗證與疑難排解
 
-- 本地 Ollama 模型服務
-- Harness Gitness 執行環境
-- Harness 與 Ollama 的基本連接
-- 一個最簡單的 Hello World Pipeline
+- 若 Pipeline 無法執行，檢查 Connector（Repository 存取權限）、Delegate 是否已註冊並可存取目標執行環境。
+- 若 Shell Script 步驟顯示權限錯誤，確認該步驟是否允許在 Delegate 上執行（`onDelegate: true`）或是否須使用容器執行。
+- 查看 Harness 的 Execution Logs（步驟詳細執行紀錄）以取得錯誤與堆疊資訊。
+
+## 建議的延伸練習
+
+- 在 Pipeline 裡新增一個簡單的單元測試步驟（例如執行一個小型測試腳本），使之成為後續 Step2 串接 AI 前的驗收門檻。
+- 在本地建立一個簡易 Webhook 或 CI workflow，推送到 `main` 時自動觸發 Harness Pipeline（視你的 Harness 設定與權限）。
+
+## 參考
+
+- Harness 官方文件（以你的帳號與版本為主）
+- 本專案後續 Step2 將示範如何把 AI Model（Ollama）串接成 Connector 並在 Pipeline 中使用
+
+## Changelog
+
+| 版本 | 日期 | 撰寫人 | 變更內容 |
+| --- | --- | --- | --- |
+| 1.0 | 2026-04-20 | Nexvest 團隊 | 初版：建立 Hello World Pipeline 指南 |

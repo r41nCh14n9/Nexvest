@@ -1,293 +1,113 @@
-﻿# Step 3: Spring Boot 基礎專案撰寫與單元測試
+---
+# Step 3: 補齊 Infrastructure、Delegate 與外部系統連接，部署至 `dev` 環境
 
-本階段建立 Spring Boot 架構，並完成人員管理 CRUD 功能的單元測試，讓專案進入可測試的微服務形態。
-
+**文檔類型**: 部署與運維指南
+**版本**: 1.0
+**編制日期**: 2026-04-20
 ---
 
-## 3.1 專案架構
+## 目標
 
-建議使用 Maven 並採用以下基本結構：
+- 建立並註冊 Harness Delegate（讓 Pipeline 步驟可在你的環境執行）
+- 定義 `dev` Environment 與對應 Infrastructure（例如 Kubernetes cluster）
+- 串接常用外部系統：Git、Docker Registry、Kubernetes、Secrets 管理
 
-```
-src/
-  main/
-    java/com/nexvest/
-      NexvestApplication.java
-      controller/
-        UserController.java
-      service/
-        UserService.java
-      model/
-        User.java
-      repository/
-        UserRepository.java
-  test/
-    java/com/nexvest/
-      service/
-        UserServiceTest.java
-      controller/
-        UserControllerTest.java
-pom.xml
-```
+## 前置需求
 
----
+- 一個可供安裝 Delegate 的執行環境（例如小型 VM 或 Kubernetes cluster）
+- 權限建立 Service Account、建立或安裝必要的 infra（e.g., k8s cluster）
 
-## 3.2 Spring Boot 應用核心
+## 安裝與註冊 Delegate（快速指南）
 
-`NexvestApplication.java`：
-
-```java
-package com.nexvest;
-
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-
-@SpringBootApplication
-public class NexvestApplication {
-  public static void main(String[] args) {
-    SpringApplication.run(NexvestApplication.class, args);
-  }
-}
-```
-
-`User.java`：
-
-```java
-package com.nexvest.model;
-
-public class User {
-  private Long id;
-  private String name;
-  private String email;
-
-  public User() {}
-
-  public User(Long id, String name, String email) {
-    this.id = id;
-    this.name = name;
-    this.email = email;
-  }
-
-  public Long getId() {
-    return id;
-  }
-
-  public void setId(Long id) {
-    this.id = id;
-  }
-
-  public String getName() {
-    return name;
-  }
-
-  public void setName(String name) {
-    this.name = name;
-  }
-
-  public String getEmail() {
-    return email;
-  }
-
-  public void setEmail(String email) {
-    this.email = email;
-  }
-}
-```
-
-`UserService.java`：
-
-```java
-package com.nexvest.service;
-
-import com.nexvest.model.User;
-import java.util.*;
-import org.springframework.stereotype.Service;
-
-@Service
-public class UserService {
-  private final Map<Long, User> store = new HashMap<>();
-  private long nextId = 1;
-
-  public User createUser(User user) {
-    user.setId(nextId++);
-    store.put(user.getId(), user);
-    return user;
-  }
-
-  public Optional<User> getUser(Long id) {
-    return Optional.ofNullable(store.get(id));
-  }
-
-  public List<User> getAllUsers() {
-    return new ArrayList<>(store.values());
-  }
-
-  public Optional<User> updateUser(Long id, User update) {
-    if (!store.containsKey(id)) {
-      return Optional.empty();
-    }
-    update.setId(id);
-    store.put(id, update);
-    return Optional.of(update);
-  }
-
-  public boolean deleteUser(Long id) {
-    return store.remove(id) != null;
-  }
-}
-```
-
-`UserController.java`：
-
-```java
-package com.nexvest.controller;
-
-import com.nexvest.model.User;
-import com.nexvest.service.UserService;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-import java.util.List;
-
-@RestController
-@RequestMapping("/api/users")
-public class UserController {
-
-  private final UserService userService;
-
-  public UserController(UserService userService) {
-    this.userService = userService;
-  }
-
-  @PostMapping
-  public ResponseEntity<User> createUser(@RequestBody User user) {
-    return ResponseEntity.ok(userService.createUser(user));
-  }
-
-  @GetMapping("/{id}")
-  public ResponseEntity<User> getUser(@PathVariable Long id) {
-    return userService.getUser(id)
-        .map(ResponseEntity::ok)
-        .orElse(ResponseEntity.notFound().build());
-  }
-
-  @GetMapping
-  public List<User> getAllUsers() {
-    return userService.getAllUsers();
-  }
-
-  @PutMapping("/{id}")
-  public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User user) {
-    return userService.updateUser(id, user)
-        .map(ResponseEntity::ok)
-        .orElse(ResponseEntity.notFound().build());
-  }
-
-  @DeleteMapping("/{id}")
-  public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
-    return userService.deleteUser(id)
-        ? ResponseEntity.noContent().build()
-        : ResponseEntity.notFound().build();
-  }
-}
-```
-
----
-
-## 3.3 基礎單元測試
-
-`UserServiceTest.java`：
-
-```java
-package com.nexvest.service;
-
-import com.nexvest.model.User;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import java.util.List;
-import static org.junit.jupiter.api.Assertions.*;
-
-public class UserServiceTest {
-
-  private UserService userService;
-
-  @BeforeEach
-  void setUp() {
-    userService = new UserService();
-  }
-
-  @Test
-  void createUserShouldAssignId() {
-    User user = new User(null, "Alice", "alice@example.com");
-    User created = userService.createUser(user);
-
-    assertNotNull(created.getId());
-    assertEquals("Alice", created.getName());
-  }
-
-  @Test
-  void getAllUsersShouldReturnCreatedUsers() {
-    userService.createUser(new User(null, "Alice", "alice@example.com"));
-    userService.createUser(new User(null, "Bob", "bob@example.com"));
-
-    List<User> users = userService.getAllUsers();
-    assertEquals(2, users.size());
-  }
-
-  @Test
-  void updateUserShouldReturnUpdatedUser() {
-    User created = userService.createUser(new User(null, "Alice", "alice@example.com"));
-    User update = new User(null, "Alice B.", "aliceb@example.com");
-
-    User updated = userService.updateUser(created.getId(), update).orElseThrow();
-    assertEquals("Alice B.", updated.getName());
-    assertEquals(created.getId(), updated.getId());
-  }
-
-  @Test
-  void deleteUserShouldRemoveUser() {
-    User created = userService.createUser(new User(null, "Alice", "alice@example.com"));
-    assertTrue(userService.deleteUser(created.getId()));
-    assertFalse(userService.getUser(created.getId()).isPresent());
-  }
-}
-```
-
----
-
-## 3.4 Maven 測試指令
+1. 在 Harness UI 中：Project → Setup → Delegates → New Delegate，選擇 Platform（Kubernetes / Self-hosted）
+2. 依指示下載或使用 Helm chart 安裝（若使用 k8s）：
 
 ```bash
-mvn clean test
+# 範例：使用 Helm 安裝（假設已設定 kubeconfig 指向 dev cluster）
+helm repo add harness https://harness.github.io/helm-charts
+helm repo update
+helm install harness-delegate harness/harness-delegate --namespace harness-delegate --create-namespace \
+  --set accountId=<YOUR_HARNESS_ACCOUNT_ID> --set managerUrl=<HARNESS_MANAGER_URL> --set token=<DELEGATE_TOKEN>
 ```
 
-若要包含測試覆蓋率，可加上 JaCoCo：
+3. 等待 Delegate 在 Harness UI 顯示為 `Healthy`。
 
-```bash
-mvn clean test jacoco:report
-```
+## 定義 Environment 與 Infrastructure
 
----
+- 在 Harness 中建立 Environment（`dev`），並綁定對應的 Infrastructure Definition（例如 Kubernetes Cluster 或 VM）
+- 為 Kubernetes 設定 Kubeconfig Connector，使 Harness 能夠部署 Kubernetes manifests
 
-## 3.5 Harness Pipeline 中加入單元測試
+## 串接外部系統（清單）
 
-在 `.harness/build-pipeline.yaml` 添加：
+- Git Connector（repo 存取）
+- Docker Registry Connector（image 推送/拉取）
+- Kubernetes Connector（部署目標）
+- Secrets Manager / Vault（安全儲存憑證）
+
+## 範例：Pipeline Stage 部署到 Kubernetes
 
 ```yaml
-- name: unit-tests
-  type: run
-  spec:
-    container: maven:3.9-eclipse-temurin-17
-    script: mvn clean test
+# pipelines/deploy-to-dev.yaml  (stage 範例)
+pipeline:
+  name: Deploy to Dev
+  identifier: deploy_dev
+  stages:
+    - stage:
+        name: Deploy Stage
+        identifier: deploy_stage
+        type: Deployment
+        spec:
+          infrastructure:
+            environmentRef: dev
+          execution:
+            steps:
+              - step:
+                  type: KubernetesApply
+                  name: Apply Manifests
+                  identifier: k8s_apply
+                  spec:
+                    manifests:
+                      - |-
+                        apiVersion: apps/v1
+                        kind: Deployment
+                        metadata:
+                          name: hello-app
+                        spec:
+                          replicas: 1
+                          selector:
+                            matchLabels:
+                              app: hello-app
+                          template:
+                            metadata:
+                              labels:
+                                app: hello-app
+                            spec:
+                              containers:
+                                - name: hello
+                                  image: <YOUR_REGISTRY>/hello:latest
+                                  ports:
+                                    - containerPort: 8080
+
 ```
 
----
+## 驗證
 
-## 3.6 結論
+1. 確認 Delegate 健康且能 reach 外部資源（git、registry、k8s API）。
+2. Run `Deploy to Dev` Pipeline，檢查 Kubernetes 中是否建立 `hello-app` Pod/Deployment。
 
-完成 step3 後，你應該已經具備：
+## 排錯重點
 
-- Spring Boot 基礎專案架構
-- 人員管理 CRUD 功能的基礎實作
-- 可執行的單元測試
-- Harness Pipeline 中運行測試的能力
+- Delegate 無法建立連線：檢查網路、代理、DNS 與 Manager URL
+- 權限錯誤：針對 K8s Connector 檢查 ServiceAccount 是否有 `create`/`apply` 權限
+- Image Pull Error：確認 Registry 憑證與 image 標籤是否正確
 
+## 延伸建議
+
+- 使用 Infrastructure as Code（例如 Terraform）建立 cluster 與雲端資源，並把 state 與 pipeline 結合
+- 建立 Policy（Policy as Code）來阻止非合規部署到 prod
+
+## Changelog
+
+| 版本 | 日期 | 撰寫人 | 變更內容 |
+| --- | --- | --- | --- |
+| 1.0 | 2026-04-20 | Nexvest 團隊 | 初版：Delegate 與 dev 部署指南 |
