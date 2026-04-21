@@ -1,0 +1,21 @@
+pipeline:
+  name: Hello World Pipeline
+  identifier: hello_world_pipeline
+  description: A minimal Harness pipeline that prints a hello message (for learning/testing)
+  stages:
+    - stage:
+        name: Hello World Stage
+        identifier: hello_world_stage
+        type: Deployment
+        spec:
+          execution:
+            steps:
+              - step:
+                  type: ShellScript
+                  name: Print Hello
+                  identifier: print_hello
+                  spec:
+                    shell: Bash
+                    onDelegate: true
+                    command: |
+                      echo "Hello from Harness!"
