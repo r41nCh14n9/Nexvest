@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: agent-harness-versioning
+data:
+  description: |
+    Example of harness versioning and A/B testing split for agents.
+  ab_tests: |
+    - name: agent-vs-agent
+      variants:
+        - name: stable
+          version: v1.2.0
+          weight: 80
+        - name: experiment
+          version: v1.3.0-canary
+          weight: 20
