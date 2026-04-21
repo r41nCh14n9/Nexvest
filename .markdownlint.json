@@ -1,0 +1,8 @@
+{
+  "default": true,
+  "line-length": false,
+  "MD013": false,
+  "MD041": false,
+  "MD022": { "level": 2 },
+  "MD032": { "level": 2 }
+}

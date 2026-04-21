@@ -1,0 +1,52 @@
+name: Agent CI
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  lint-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install Python deps
+        run: |
+          python -m pip install --upgrade pip
+          if [ -f tools/requirements-dev.txt ]; then pip install -r tools/requirements-dev.txt; fi
+
+      - name: Install markdownlint-cli
+        run: |
+          npm install -g markdownlint-cli
+
+      - name: Run pre-commit
+        run: |
+          pip install pre-commit || true
+          pre-commit run --all-files --show-diff-on-failure || exit 1
+
+      - name: Run Python format & lint
+        run: |
+          python -m black --check . || exit 1
+          python -m flake8 || exit 1
+
+      - name: Run Prettier check (if present)
+        run: |
+          if command -v prettier >/dev/null 2>&1; then prettier --check "**/*.{js,ts,jsx,tsx,json,md,css,scss}" || exit 1; fi
+
+      - name: Markdown lint
+        run: |
+          markdownlint "**/*.md" || exit 1
+
+      - name: Run tests
+        run: |
+          pytest -q || exit 1
