@@ -75,8 +75,3 @@ Jyoti Bansal： 連續創業家（AppDynamics, Harness），在 DevOps 與 AI �
 - 伊隆·馬斯克 (Elon Musk)
 - Jyoti Bansal
 - 魏哲家
-
-
-
-
-

@@ -29,12 +29,12 @@ Full, comprehensive documentation is available on the Terraform website:
 1. Clone the repo into your local directory. Run `git clone https://github.com/harness/terraform-provider-harness.git`
 2. Run `go mod tidy`
 3. Run `go build -o terraform-provider-harness`
-4. Create a file called `local.sh` in the root directory of the repository and copy the following script to the bash file 
+4. Create a file called `local.sh` in the root directory of the repository and copy the following script to the bash file
 
 ```SH
 #!/bin/sh
 
-version=0.40.2 #specify in this format 
+version=0.40.2 #specify in this format
 source=registry.terraform.io/harness/harnessregistry.terraform.io/harness/harness
 platform=darwin_amd64
 

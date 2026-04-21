@@ -1,12 +1,12 @@
 # Phase 1 快速參考指南
 
-**文檔類型**: 系統設計 / 快速參考  
-**版本**: 1.0  
-**編制日期**: 2026-04-10  
-**上次更新**: 2026-04-10  
-**撰寫人員**: 技術團隊  
-**審核人員**: 待審核  
-**適用對象**: 開發團隊 / 架構師 / 項目經理  
+**文檔類型**: 系統設計 / 快速參考
+**版本**: 1.0
+**編制日期**: 2026-04-10
+**上次更新**: 2026-04-10
+**撰寫人員**: 技術團隊
+**審核人員**: 待審核
+**適用對象**: 開發團隊 / 架構師 / 項目經理
 
 ---
 
@@ -34,26 +34,26 @@
 ```mermaid
 graph TB
     Client["用戶端<br/>(iOS/Android/Web)<br/>Multi-Platform"]
-    
+
     Client -->|HTTPS/WSS| Gateway["API Gateway<br/>(Nginx + Kong)<br/>- 限流、鑑權<br/>- 負載均衡"]
-    
+
     Gateway --> MS1["微服務1<br/>FundamentalService<br/>(財報)"]
     Gateway --> MS2["微服務2<br/>AlertService<br/>(警示)"]
     Gateway --> MS3["微服務3<br/>NewsService<br/>(新聞)"]
     Gateway --> MS4["微服務4<br/>DashboardService<br/>(儀表板)"]
     Gateway --> MS5["UserService<br/>(用戶)"]
-    
+
     MS1 --> DAL["數據訪問層<br/>(Kubernetes)"]
     MS2 --> DAL
     MS3 --> DAL
     MS4 --> DAL
     MS5 --> DAL
-    
+
     DAL --> DB["PostgreSQL"]
     DAL --> Redis["Redis Cluster"]
     DAL --> ES["Elasticsearch"]
     DAL --> Kafka["Kafka"]
-    
+
     style Client fill:#e1f5ff
     style Gateway fill:#fff3e0
     style MS1 fill:#f3e5f5
@@ -513,7 +513,7 @@ curl http://localhost:3000/health
 # 後端測試
 npm test -- --verbose
 
-# 前端測試  
+# 前端測試
 npm run test:ui
 
 # E2E 測試
@@ -536,8 +536,8 @@ npm run e2e -- --headed  # 顯示瀏覽器視窗
 
 ## 緊急聯繫
 
-**系統故障 (生產)**: Slack #incident-response  
-**關鍵問題討論**: 每日 9:30 站會  
+**系統故障 (生產)**: Slack #incident-response
+**關鍵問題討論**: 每日 9:30 站會
 **部署窗口**: 周二/周四 14:00-16:00 UTC
 
 ---

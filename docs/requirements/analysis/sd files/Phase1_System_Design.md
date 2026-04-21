@@ -1,12 +1,12 @@
 # Nexvest Phase 1 系統設計文檔
 
-**文檔類型**: 系統設計  
-**版本**: 1.0  
-**編制日期**: 2026-04-10  
-**上次更新**: 2026-04-10  
-**撰寫人員**: 技術團隊  
-**審核人員**: 待審核  
-**適用對象**: 架構師 / 開發團隊 / 項目經理  
+**文檔類型**: 系統設計
+**版本**: 1.0
+**編制日期**: 2026-04-10
+**上次更新**: 2026-04-10
+**撰寫人員**: 技術團隊
+**審核人員**: 待審核
+**適用對象**: 架構師 / 開發團隊 / 項目經理
 
 ---
 
@@ -208,11 +208,11 @@ graph TB
         Client2[Android App]
         Client3[Web App]
     end
-    
+
     subgraph "API Gateway + 負載均衡"
         Gateway[Nginx + Kong/AWS ALB]
     end
-    
+
     subgraph "微服務層 (Kubernetes)"
         MS1[FundamentalService<br/>財報服務]
         MS2[AlertService<br/>警示服務]
@@ -221,7 +221,7 @@ graph TB
         MS5[UserService<br/>用戶服務]
         MS6[DataAggService<br/>資料聚合服務]
     end
-    
+
     subgraph "資料訪問層"
         subgraph "快取層 (Redis Cluster)"
             Redis[Redis Cluster]
@@ -242,25 +242,25 @@ graph TB
             PG[PostgreSQL 14+]
         end
     end
-    
+
     subgraph "外部資料源"
         DS1[行情源]
         DS2[新聞源]
         DS3[財報源]
         DS4[企業資料源]
     end
-    
+
     Client1 --> Gateway
     Client2 --> Gateway
     Client3 --> Gateway
-    
+
     Gateway --> MS1
     Gateway --> MS2
     Gateway --> MS3
     Gateway --> MS4
     Gateway --> MS5
     Gateway --> MS6
-    
+
     MS1 --> Redis
     MS1 --> PG
     MS2 --> Redis
@@ -271,12 +271,12 @@ graph TB
     MS5 --> PG
     MS6 --> Influx
     MS6 --> Kafka
-    
+
     DS1 --> MS6
     DS2 --> MS3
     DS3 --> MS1
     DS4 --> MS1
-    
+
     style Client1 fill:#e1f5ff
     style Client2 fill:#e1f5ff
     style Client3 fill:#e1f5ff
@@ -316,7 +316,7 @@ flowchart TD
         Queue --> Push[推送服務]
         Push --> User[用戶]
     end
-    
+
     subgraph "財報資料流"
         DS2[財報源] --> Crawler[資料爬取服務]
         Crawler --> Calc[指標計算]
@@ -324,7 +324,7 @@ flowchart TD
         PG --> API[API Gateway]
         API --> FE[前端展示]
     end
-    
+
     subgraph "新聞資料流"
         DS3[新聞源] --> Crawler2[爬蟲服務]
         Crawler2 --> NLP[NLP 處理]
@@ -332,7 +332,7 @@ flowchart TD
         ES --> Rec[推薦演算法]
         Rec --> Feed[用戶個人化流]
     end
-    
+
     subgraph "用戶操作流"
         Client[用戶端] --> API2[API Gateway]
         API2 --> Auth[認證 & 授權]
@@ -340,7 +340,7 @@ flowchart TD
         Biz --> DAL[資料層]
         DAL --> Resp[回應]
     end
-    
+
     style DS1 fill:#e8f5e9
     style DS2 fill:#e8f5e9
     style DS3 fill:#e8f5e9
@@ -618,22 +618,22 @@ async function evaluateAlert(
   alert: Alert,
   market_data: MarketData
 ): Promise<AlertTrigger | null> {
-  
+
   // 1. 解析规则条件 (支持嵌套 AND/OR)
   const rule_tree = parseRuleExpression(alert.conditions);
-  
+
   // 2. 获取实时数据
   const current_price = market_data.price;
   const volume = market_data.volume;
   const technical_indicators = await getTechnicalIndicators(alert.symbol);
-  
+
   // 3. 递归评估规则树
   const match = evaluateNode(rule_tree, {
     price: current_price,
     volume: volume,
     indicators: technical_indicators
   });
-  
+
   // 4. 触发警示
   if (match) {
     const trigger = createAlertTrigger(alert, market_data);
@@ -641,7 +641,7 @@ async function evaluateAlert(
     await pushNotification(alert.user_id, trigger);
     return trigger;
   }
-  
+
   return null;
 }
 
@@ -653,19 +653,19 @@ function evaluateNode(
   if (node.type === 'leaf') {
     return evaluateCondition(node.condition, context);
   }
-  
+
   if (node.operator === 'AND') {
-    return node.children.every(child => 
+    return node.children.every(child =>
       evaluateNode(child, context)
     );
   }
-  
+
   if (node.operator === 'OR') {
-    return node.children.some(child => 
+    return node.children.some(child =>
       evaluateNode(child, context)
     );
   }
-  
+
   return false;
 }
 
@@ -745,7 +745,7 @@ async function pushNotification(
   user_id: string,
   trigger: AlertTrigger
 ): Promise<void> {
-  
+
   // 1. 应用内推送
   await notificationService.createInAppNotification({
     user_id,
@@ -753,7 +753,7 @@ async function pushNotification(
     content: trigger.message,
     data: trigger.data
   });
-  
+
   // 2. 移动推送 (APNs/FCM)
   if (user.push_settings.enabled) {
     await mobilePushService.send({
@@ -765,7 +765,7 @@ async function pushNotification(
       }
     });
   }
-  
+
   // 3. 异步任务: Email 推送
   await taskQueue.enqueue('send_alert_email', {
     user_id,
@@ -817,12 +817,12 @@ async function getPersonalizedNewsFeed(
   user_id: string,
   limit: number = 20
 ): Promise<News[]> {
-  
+
   // 1. 获取用户偏好 (关注的股票、产业)
   const preferences = await getUserPreferences(user_id);
   const watched_symbols = preferences.watched_symbols;
   const blocked_sources = preferences.blocked_sources;
-  
+
   // 2. 从 Elasticsearch 查询相关新闻
   const candidate_news = await searchNews({
     symbols: watched_symbols,
@@ -830,7 +830,7 @@ async function getPersonalizedNewsFeed(
     time_range: '24h',
     limit: limit * 5 // 候选集
   });
-  
+
   // 3. 计算相关性分数
   const scored_news = candidate_news.map(news => ({
     ...news,
@@ -838,7 +838,7 @@ async function getPersonalizedNewsFeed(
     recency_score: calculateRecencyScore(news.published_at),
     source_credibility_score: getSourceCredibility(news.source)
   }));
-  
+
   // 4. 综合排序
   const ranked = scored_news
     .map(n => ({
@@ -851,7 +851,7 @@ async function getPersonalizedNewsFeed(
     }))
     .sort((a, b) => b.final_score - a.final_score)
     .slice(0, limit);
-  
+
   return ranked;
 }
 ```
@@ -922,29 +922,29 @@ CREATE TABLE user_news_reads (
 ```javascript
 // 使用第三方 LLM API 生成摘要
 async function generateNewsSummary(news: News): Promise<string> {
-  
+
   try {
     const prompt = `
       请对下面的新闻文章进行摘要，提供 3 行核心要点。
-      
+
       标题: ${news.title}
       内容: ${news.content.substring(0, 2000)}
-      
+
       要求:
       1. 简洁准确
       2. 采用bullet point 格式
       3. 突出投资相关信息
     `;
-    
+
     const summary = await llmService.call({
       provider: 'openai', // 或国内服务商如 Qwen, Claude
       model: 'gpt-3.5-turbo',
       prompt,
       maxTokens: 200
     });
-    
+
     return summary;
-    
+
   } catch (error) {
     // 降级: 返回原始前几行
     return news.content.substring(0, 300) + '...';
@@ -1402,24 +1402,24 @@ nexvest-web/
         更新于 {{ formatTime(fundamental.last_updated) }}
       </span>
     </header>
-    
+
     <div class="health-score-area">
       <!-- 健康度仪表 -->
       <HealthScoreMeter
         :score="fundamental.health_score"
         :trend="fundamental.trend"
       />
-      
+
       <!-- 分项评分 -->
       <div class="score-breakdown">
-        <div 
+        <div
           v-for="(score, key) in fundamental.breakdown"
           :key="key"
           class="score-item"
         >
           <label>{{ scoreLabels[key] }}</label>
           <div class="score-bar">
-            <div 
+            <div
               class="score-fill"
               :style="{width: (score.score / 10) * 100 + '%'}"
             ></div>
@@ -1428,18 +1428,18 @@ nexvest-web/
         </div>
       </div>
     </div>
-    
+
     <!-- 历史趋势图 -->
     <div class="trend-chart">
       <TrendChart :data="fundamental.historical_trend" />
     </div>
-    
+
     <!-- 同业对比 -->
     <div class="peer-comparison">
       <p>行业对标: <strong>{{ fundamental.peer_comparison.industry_avg.toFixed(2) }}</strong></p>
       <p>排名: <strong>{{ fundamental.peer_comparison.rank }}</strong></p>
     </div>
-    
+
     <!-- 预警事项 -->
     <div v-if="fundamental.warning_indicators.length" class="warnings">
       <h4>⚠️ 预警事项</h4>
@@ -1490,58 +1490,58 @@ export default defineComponent({
   border-radius: 8px;
   padding: 20px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  
+
   .card-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 20px;
-    
+
     h3 {
       font-size: 20px;
       margin: 0;
     }
-    
+
     .last-updated {
       color: #999;
       font-size: 12px;
     }
   }
-  
+
   .health-score-area {
     display: flex;
     gap: 20px;
     margin-bottom: 20px;
   }
-  
+
   .score-breakdown {
     flex: 1;
-    
+
     .score-item {
       display: grid;
       grid-template-columns: 80px 1fr 40px;
       gap: 10px;
       align-items: center;
       margin-bottom: 12px;
-      
+
       label {
         font-size: 12px;
         color: #666;
       }
-      
+
       .score-bar {
         height: 20px;
         background: #eee;
         border-radius: 4px;
         overflow: hidden;
-        
+
         .score-fill {
           height: 100%;
           background: linear-gradient(90deg, #ff6b6b, #ffd93d, #6bcf7f);
           transition: width 0.3s;
         }
       }
-      
+
       .score-value {
         font-weight: bold;
         text-align: right;
@@ -1566,20 +1566,20 @@ export default defineComponent({
 <template>
   <div class="alert-form">
     <h3>创建警示规则</h3>
-    
+
     <div class="form-group">
       <label>股票代码</label>
-      <input 
+      <input
         v-model="form.symbol"
         placeholder="输入股票代码 (e.g., 2330)"
       />
     </div>
-    
+
     <div class="form-group">
       <label>选择预设模板</label>
       <select v-model="selectedTemplate" @change="loadTemplate">
         <option value="">--自定义规则--</option>
-        <option 
+        <option
           v-for="tpl in templates"
           :key="tpl.id"
           :value="tpl.id"
@@ -1588,24 +1588,24 @@ export default defineComponent({
         </option>
       </select>
     </div>
-    
+
     <!-- 自定义规则编辑器 -->
     <div class="rule-builder">
       <h4>规则设置 (AND/OR 逻辑)</h4>
-      <RuleNodeEditor 
+      <RuleNodeEditor
         v-model="form.conditions"
         @add-condition="addCondition"
         @remove-condition="removeCondition"
       />
     </div>
-    
+
     <div class="form-group">
       <label>
         <input v-model="form.push_enabled" type="checkbox" />
         启用推送通知
       </label>
     </div>
-    
+
     <div class="actions">
       <button @click="submitForm" class="btn-primary">创建警示</button>
       <button @click="resetForm" class="btn-secondary">重置</button>
@@ -1682,16 +1682,16 @@ export default defineComponent({
   background: white;
   padding: 20px;
   border-radius: 8px;
-  
+
   .form-group {
     margin-bottom: 20px;
-    
+
     label {
       display: block;
       margin-bottom: 8px;
       font-weight: 500;
     }
-    
+
     input, select {
       width: 100%;
       padding: 8px 12px;
@@ -1789,22 +1789,22 @@ gantt
     財報後端開發           :done, be1, 2026-04-01, 10d
     財報前端開發           :active, fe1, 2026-04-08, 7d
     基礎設施測試           :active, infra1, 2026-04-08, 7d
-    
+
     section 第3週
     警示後端開發           :alert_be, after fe1, 10d
     新聞爬蟲開發           :news_crawl, after fe1, 7d
     警示前端開發           :alert_fe, after fe1, 7d
-    
+
     section 第4週
     新聞前端開發           :news_fe, after alert_be, 7d
     儀表板系統開發         :dash_be, after alert_be, 7d
     多端適配               :responsive, after alert_be, 7d
-    
+
     section 第5週
     儀表板系統完成         :done, dash_done, after dash_be, 7d
     整合測試               :e2e, after dash_done, 7d
     效能優化               :perf, after dash_done, 7d
-    
+
     section 第6週
     錯誤修復               :bugfix, after e2e, 7d
     部署準備               :deploy, after e2e, 7d

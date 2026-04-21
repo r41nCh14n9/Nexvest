@@ -1,19 +1,24 @@
 """Minimal reasoning optimizer middleware stub.
 
-Provides a hook to adjust reasoning settings (temperature, max_tokens, etc.)
-based on simple heuristics such as recent latency, error rate or detected loops.
+Provides a hook to adjust reasoning settings (temperature,
+`max_tokens`, etc.) based on simple heuristics such as recent
+latency, error rate, or detected loops.
 """
 from typing import Dict
 
 
 class ReasoningOptimizer:
     def __init__(self, base_config: Dict = None):
-        self.base_config = base_config or {"temperature": 0.7, "max_tokens": 512}
+        self.base_config = base_config or {
+            "temperature": 0.7,
+            "max_tokens": 512,
+        }
 
     def optimize(self, signals: Dict) -> Dict:
         """Return an adjusted config based on provided signals.
 
-        signals may include keys: latency_ms, error_rate, loop_detected, entropy
+        Signals may include keys such as `latency_ms`, `error_rate`,
+        `loop_detected`, and `entropy`.
         """
         cfg = dict(self.base_config)
         if signals.get("loop_detected"):

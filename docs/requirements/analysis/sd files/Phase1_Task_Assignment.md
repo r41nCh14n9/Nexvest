@@ -1,12 +1,12 @@
 # Phase 1 詳細任務分配與開發指南
 
-**文檔類型**: 開發指南 / 任務分配  
-**版本**: 1.0  
-**編制日期**: 2026-04-10  
-**上次更新**: 2026-04-10  
-**撰寫人員**: 技術團隊  
-**審核人員**: 待審核  
-**適用對象**: 開發團隊 / 項目經理  
+**文檔類型**: 開發指南 / 任務分配
+**版本**: 1.0
+**編制日期**: 2026-04-10
+**上次更新**: 2026-04-10
+**撰寫人員**: 技術團隊
+**審核人員**: 待審核
+**適用對象**: 開發團隊 / 項目經理
 
 ---
 
@@ -50,15 +50,15 @@
 **检查清单**:
 ```sql
 -- 验证所有表已创建
-SELECT table_name FROM information_schema.tables 
+SELECT table_name FROM information_schema.tables
 WHERE table_schema = 'public';
 
 -- 验证索引已创建
-SELECT indexname FROM pg_indexes 
+SELECT indexname FROM pg_indexes
 WHERE schemaname = 'public';
 
 -- 性能基准测试
-EXPLAIN ANALYZE SELECT * FROM financial_metrics 
+EXPLAIN ANALYZE SELECT * FROM financial_metrics
 WHERE symbol = '2330' ORDER BY report_date DESC LIMIT 10;
 ```
 
@@ -208,25 +208,25 @@ GET /auth/profile
 **核心方法**:
 ```typescript
 class FundamentalService {
-  
+
   // 计算健康度评分
   async calculateHealthScore(
-    symbol: string, 
+    symbol: string,
     date?: Date
   ): Promise<HealthScore>
-  
+
   // 获取历史趋势
   async getHistoricalTrend(
-    symbol: string, 
+    symbol: string,
     years: number = 5
   ): Promise<HealthScoreTrend[]>
-  
+
   // 同业对标
   async comparePeers(
-    symbol: string, 
+    symbol: string,
     industryCode: string
   ): Promise<PeerComparison>
-  
+
   // 预警检测
   async detectWarnings(
     symbol: string
@@ -257,19 +257,19 @@ class FundamentalService {
 @Controller('fundamentals')
 @UseGuards(JwtAuthGuard)
 export class FundamentalController {
-  
+
   @Get(':symbol')
   async getFundamental(
     @Param('symbol') symbol: string,
     @Query('date') date?: string
   ): Promise<FundamentalResponse>
-  
+
   @Get(':symbol/history')
   async getHistory(
     @Param('symbol') symbol: string,
     @Query('years') years: number = 5
   ): Promise<HistoryResponse>
-  
+
   @Get(':symbol/compare')
   async comparePeers(
     @Param('symbol') symbol: string,
@@ -388,22 +388,22 @@ Alert Engine 订阅处理
 **核心类**:
 ```typescript
 class AlertEngineService {
-  
+
   // 创建警示规则
   async createAlert(alert: CreateAlertDto): Promise<Alert>
-  
+
   // 评估单个警示
   async evaluateAlert(
     alert: Alert,
     marketData: MarketData
   ): Promise<AlertTrigger | null>
-  
+
   // 批量评估用户的所有警示
   async evaluateUserAlerts(
     userId: string,
     marketData: MarketData
   ): Promise<AlertTrigger[]>
-  
+
   // 条件判断
   private evaluateCondition(
     condition: AlertCondition,
@@ -615,20 +615,20 @@ GET /news/search
 **实现**:
 ```typescript
 class SummarizationService {
-  
+
   async generateSummary(news: News): Promise<string> {
     // 检查缓存
     const cachedSummary = await this.cache.get(`summary:${news.id}`);
     if (cachedSummary) return cachedSummary;
-    
+
     // 调用 LLM API
     const summary = await this.llmService.summarize(
       news.title + '\n' + news.content
     );
-    
+
     // 存储缓存
     await this.cache.set(`summary:${news.id}`, summary, 7 * 24 * 3600);
-    
+
     return summary;
   }
 }
@@ -1118,7 +1118,7 @@ describe('FundamentalService', () => {
     };
 
     const score = await service.calculateHealthScore(metrics);
-    
+
     expect(score.score).toBeGreaterThan(3.0);
     expect(score.level).toBe('green');
   });
@@ -1167,11 +1167,11 @@ describe('Stock Detail Flow', () => {
 
   it('should load fundamental data', () => {
     cy.visit('/stocks/2330');
-    
+
     // 等待财报卡片加载
     cy.get('[data-testid="health-score"]').should('exist');
     cy.get('[data-testid="health-score"]').contains(/\d\.\d/);
-    
+
     // 验证图表存在
     cy.get('[data-testid="trend-chart"]').should('be.visible');
   });
@@ -1182,7 +1182,7 @@ describe('Stock Detail Flow', () => {
     cy.get('select[name="condition"]').select('price_above');
     cy.get('input[name="value"]').type('500');
     cy.get('button[type="submit"]').click();
-    
+
     cy.get('.success-message').should('contain', '警示创建成功');
   });
 });

@@ -4,9 +4,9 @@
 
 目標（1-2 週 MVP）：
 - 建立最小可運行的 middleware pipeline（loop detection + reasoning optimizer）。
-- 提供 Prometheus metrics endpoint 與 Grafana dashboard 範例。 
-- 部署定時 entropy 管理 agent 與範例 workflow。 
-- 提供版本化範例與 A/B 流量切分 YAML。 
+- 提供 Prometheus metrics endpoint 與 Grafana dashboard 範例。
+- 部署定時 entropy 管理 agent 與範例 workflow。
+- 提供版本化範例與 A/B 流量切分 YAML。
 - 定義升級/通知策略與 Escalation workflow。
 
 架構概念：
