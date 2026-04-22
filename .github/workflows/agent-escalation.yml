@@ -1,0 +1,14 @@
+name: Agent Escalation
+
+on:
+  workflow_dispatch: {}
+
+jobs:
+  escalation:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Notify (stub)
+        run: |
+          echo "Escalation workflow invoked - replace with real notifier"

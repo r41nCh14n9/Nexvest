@@ -26,7 +26,7 @@ resource "harness_platform_gitops_cluster" "example" {
     cluster {
       server = "https://kubernetes.default.svc" # 目標集群的 API Server 地址
       name   = "target-k8s-cluster"
-      
+
       # 認證設定
       config {
         tls_client_config {

@@ -21,7 +21,7 @@ harness:
     # <---CA data overrides--->
     caData:
       enabled: false
-      secret: 
+      secret:
     redisPassword: yzcZxDc7FVk2EA==
 
   gitopsServerHost: https://app.harness.io/prod1/gitops
@@ -44,7 +44,7 @@ harness:
   # <---Disaster Recovery override values--->
   disasterRecovery:
     enabled: false
-    identifier: 
+    identifier:
 
   # <---Openshift override values--->
   openshift:
@@ -57,7 +57,7 @@ harness:
 argo-cd:
   enabled: true
 
-# <---Argo CD configuration overrides--->
+  # <---Argo CD configuration overrides--->
 
   ## IMPORTANT: Mark crds as false for Helm installations if they are already installed in the cluster
   crds:
@@ -96,7 +96,7 @@ argo-cd:
         tag: v0.5.0
 
   repoServer:
-    replicas:  2 
+    replicas: 2
     env:
       - name: HELM_PLUGINS
         value: /helm-sops-tools/helm-plugins/
@@ -120,14 +120,14 @@ argo-cd:
         value: /usr/local/bin/helm
       - name: PATH
         value: /helm-sops-tools/helm-secrets:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
-    
+
 
     # <---SOPS override values--->
     initContainers:
       - name: sops-helm-secrets-tool
         image: docker.io/harness/gitops-agent-installer-helper:v0.0.13
         imagePullPolicy: IfNotPresent
-        command: [ sh, -ec ]
+        command: [sh, -ec]
         args:
           - |
             cp -r /custom-tools/. /helm-sops-tools
@@ -139,7 +139,7 @@ argo-cd:
           - mountPath: /helm-sops-tools
             name: helm-sops-tools
     extraContainers:
-      - command: [ /var/run/argocd/argocd-cmp-server ]
+      - command: [/var/run/argocd/argocd-cmp-server]
         image: docker.io/harness/gitops-agent-installer-helper:v0.0.13
         imagePullPolicy: IfNotPresent
         name: argocd-harness-plugin
@@ -180,8 +180,8 @@ agent:
   # <---Agent Proxy Config overrides--->
   proxy:
     enabled: false
-    httpProxy: 
-    httpsProxy: 
+    httpProxy:
+    httpsProxy:
 
 # <---Agent upgrader overrides--->
 upgrader:
@@ -191,9 +191,9 @@ upgrader:
   config:
     # -- Proxy configuration for upgrader
     # HTTPS_PROXY=proxyScheme://proxyUser:proxyPassword@proxyHost:proxyPort
-    proxyHost: 
-    proxyPort: 
-    proxyScheme: 
-    noProxy: 
-    proxyUser: 
-    proxyPassword: 
+    proxyHost:
+    proxyPort:
+    proxyScheme:
+    noProxy:
+    proxyUser:
+    proxyPassword:

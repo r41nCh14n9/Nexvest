@@ -1,12 +1,12 @@
 # Phase 1 快速參考指南
 
-**文檔類型**: 系統設計 / 快速參考  
-**版本**: 1.0  
-**編制日期**: 2026-04-10  
-**上次更新**: 2026-04-10  
-**撰寫人員**: 技術團隊  
-**審核人員**: 待審核  
-**適用對象**: 開發團隊 / 架構師 / 項目經理  
+**文檔類型**: 系統設計 / 快速參考
+**版本**: 1.0
+**編制日期**: 2026-04-10
+**上次更新**: 2026-04-10
+**撰寫人員**: 技術團隊
+**審核人員**: 待審核
+**適用對象**: 開發團隊 / 架構師 / 項目經理
 
 ---
 
@@ -18,14 +18,14 @@
 
 ## 一頁紙總結
 
-| 維度 | 內容 |
-| --- | --- |
-| **交付週期** | 6 週 (Q1-早 Q2) |
-| **核心功能數** | 4 個 (財報、警示、新聞、儀表板) |
-| **目標 DAU** | 5,000+ |
-| **目標可用性** | 99.5% |
-| **團隊規模** | 10 人 (後端 3 + 前端 2 + QA 1 + DevOps 1 + 其他 3) |
-| **預期花費** | 366 人·天 |
+| 維度           | 內容                                               |
+| -------------- | -------------------------------------------------- |
+| **交付週期**   | 6 週 (Q1-早 Q2)                                    |
+| **核心功能數** | 4 個 (財報、警示、新聞、儀表板)                    |
+| **目標 DAU**   | 5,000+                                             |
+| **目標可用性** | 99.5%                                              |
+| **團隊規模**   | 10 人 (後端 3 + 前端 2 + QA 1 + DevOps 1 + 其他 3) |
+| **預期花費**   | 366 人·天                                          |
 
 ---
 
@@ -34,26 +34,26 @@
 ```mermaid
 graph TB
     Client["用戶端<br/>(iOS/Android/Web)<br/>Multi-Platform"]
-    
+
     Client -->|HTTPS/WSS| Gateway["API Gateway<br/>(Nginx + Kong)<br/>- 限流、鑑權<br/>- 負載均衡"]
-    
+
     Gateway --> MS1["微服務1<br/>FundamentalService<br/>(財報)"]
     Gateway --> MS2["微服務2<br/>AlertService<br/>(警示)"]
     Gateway --> MS3["微服務3<br/>NewsService<br/>(新聞)"]
     Gateway --> MS4["微服務4<br/>DashboardService<br/>(儀表板)"]
     Gateway --> MS5["UserService<br/>(用戶)"]
-    
+
     MS1 --> DAL["數據訪問層<br/>(Kubernetes)"]
     MS2 --> DAL
     MS3 --> DAL
     MS4 --> DAL
     MS5 --> DAL
-    
+
     DAL --> DB["PostgreSQL"]
     DAL --> Redis["Redis Cluster"]
     DAL --> ES["Elasticsearch"]
     DAL --> Kafka["Kafka"]
-    
+
     style Client fill:#e1f5ff
     style Gateway fill:#fff3e0
     style MS1 fill:#f3e5f5
@@ -74,42 +74,42 @@ graph TB
 
 ### 後端
 
-| 層級 | 技術 | 用途 |
-| --- | --- | --- |
-| **語言** | TypeScript 4.9+ | 類型安全 |
-| **框架** | Nest.js 9+ | 企業級框架 |
-| **ORM** | TypeORM / Prisma | 資料庫映射 |
-| **資料庫** | PostgreSQL 14 | 主資料庫 |
-| **快取** | Redis 7 Cluster | 高效能快取 |
-| **搜尋** | Elasticsearch 8 | 新聞全文搜尋 |
-| **訊息佇列** | Kafka 3 | 非同步處理 |
-| **容器** | Docker + K8s | 部署 & 編排 |
-| **監控** | Prometheus + Grafana | 可觀測性 |
-| **日誌** | ELK Stack | 日誌聚合 |
+| 層級         | 技術                 | 用途         |
+| ------------ | -------------------- | ------------ |
+| **語言**     | TypeScript 4.9+      | 類型安全     |
+| **框架**     | Nest.js 9+           | 企業級框架   |
+| **ORM**      | TypeORM / Prisma     | 資料庫映射   |
+| **資料庫**   | PostgreSQL 14        | 主資料庫     |
+| **快取**     | Redis 7 Cluster      | 高效能快取   |
+| **搜尋**     | Elasticsearch 8      | 新聞全文搜尋 |
+| **訊息佇列** | Kafka 3              | 非同步處理   |
+| **容器**     | Docker + K8s         | 部署 & 編排  |
+| **監控**     | Prometheus + Grafana | 可觀測性     |
+| **日誌**     | ELK Stack            | 日誌聚合     |
 
 ### 前端
 
-| 層級 | 技術 | 用途 |
-| --- | --- | --- |
-| **框架** | Vue 3 | 核心框架 |
-| **建置** | Vite | 高速建置 |
-| **UI 組件** | Element Plus | 組件庫 |
-| **圖表** | ECharts 5 | 財務圖表 |
-| **狀態** | Pinia | 狀態管理 |
-| **HTTP** | Axios | 網路請求 |
-| **行動端** | React Native (未來) | 跨平台 |
-| **測試** | Vitest + Cypress | 測試框架 |
+| 層級        | 技術                | 用途     |
+| ----------- | ------------------- | -------- |
+| **框架**    | Vue 3               | 核心框架 |
+| **建置**    | Vite                | 高速建置 |
+| **UI 組件** | Element Plus        | 組件庫   |
+| **圖表**    | ECharts 5           | 財務圖表 |
+| **狀態**    | Pinia               | 狀態管理 |
+| **HTTP**    | Axios               | 網路請求 |
+| **行動端**  | React Native (未來) | 跨平台   |
+| **測試**    | Vitest + Cypress    | 測試框架 |
 
 ### DevOps
 
-| 工具 | 用途 |
-| --- | --- |
-| Docker | 容器化 |
-| Kubernetes | 容器編排 |
-| GitHub Actions | CI/CD |
-| Prometheus | 指標收集 |
-| Grafana | 監控可視化 |
-| ELK Stack | 日誌系統 |
+| 工具           | 用途       |
+| -------------- | ---------- |
+| Docker         | 容器化     |
+| Kubernetes     | 容器編排   |
+| GitHub Actions | CI/CD      |
+| Prometheus     | 指標收集   |
+| Grafana        | 監控可視化 |
+| ELK Stack      | 日誌系統   |
 
 ---
 
@@ -312,31 +312,31 @@ src/
 
 ### API 回應時間
 
-| API 端點 | P50 | P95 | P99 |
-| --- | --- | --- | --- |
+| API 端點 | P50   | P95   | P99  |
+| -------- | ----- | ----- | ---- |
 | 財報查詢 | 300ms | 800ms | 1.5s |
-| 警示查詢 | 200ms | 600ms | 1s |
-| 新聞流 | 400ms | 1s | 2s |
-| 儀表板 | 500ms | 1.5s | 2.5s |
+| 警示查詢 | 200ms | 600ms | 1s   |
+| 新聞流   | 400ms | 1s    | 2s   |
+| 儀表板   | 500ms | 1.5s  | 2.5s |
 
 ### 視覺效能
 
-| 指標 | 目標 |
-| --- | --- |
-| First Contentful Paint (FCP) | < 1.5s |
-| Largest Contentful Paint (LCP) | < 2.5s |
-| First Input Delay (FID) | < 100ms |
-| Cumulative Layout Shift (CLS) | < 0.1 |
-| 首屏加載 | < 2s (3G) |
+| 指標                           | 目標      |
+| ------------------------------ | --------- |
+| First Contentful Paint (FCP)   | < 1.5s    |
+| Largest Contentful Paint (LCP) | < 2.5s    |
+| First Input Delay (FID)        | < 100ms   |
+| Cumulative Layout Shift (CLS)  | < 0.1     |
+| 首屏加載                       | < 2s (3G) |
 
 ### 系統可用性
 
-| 指標 | 目標 |
-| --- | --- |
-| 服務可用性 (Uptime) | 99.5% |
-| P99 延遲 | < 2s |
-| 錯誤率 | < 1% |
-| 資料準確度 | > 99.5% |
+| 指標                | 目標    |
+| ------------------- | ------- |
+| 服務可用性 (Uptime) | 99.5%   |
+| P99 延遲            | < 2s    |
+| 錯誤率              | < 1%    |
+| 資料準確度          | > 99.5% |
 
 ---
 
@@ -474,7 +474,8 @@ npm run format          # Prettier 格式化
 
 ### 常見問題
 
-**問題: API 回應 500**
+#### 問題: API 回應 500
+
 ```bash
 # 1. 檢查後端日誌
 docker logs nexvest-api
@@ -486,7 +487,8 @@ psql -h localhost -U postgres -d nexvest -c "SELECT 1"
 docker-compose restart api
 ```
 
-**問題: Redis 無法連線**
+#### 問題: Redis 無法連線
+
 ```bash
 # 檢查 Redis 狀態
 docker logs nexvest-redis
@@ -498,7 +500,8 @@ redis-cli -h localhost ping  # 應返回 PONG
 redis-cli FLUSHALL
 ```
 
-**問題: 前端頁面空白**
+#### 問題: 前端頁面空白
+
 ```bash
 # 1. 檢查瀏覽器控制台是否有錯誤
 # 2. 檢查 API 是否正常
@@ -508,12 +511,13 @@ curl http://localhost:3000/health
 # 4. 檢查網路請求 (Network 標籤)
 ```
 
-**問題: 測試失敗**
+#### 問題: 測試失敗
+
 ```bash
 # 後端測試
 npm test -- --verbose
 
-# 前端測試  
+# 前端測試
 npm run test:ui
 
 # E2E 測試
@@ -524,20 +528,20 @@ npm run e2e -- --headed  # 顯示瀏覽器視窗
 
 ## 重要聯繫方式
 
-| 角色 | 責任 | 聯繫 |
-| --- | --- | --- |
-| **後端負責人** | 財報模組 & 架構 | @backend_lead |
-| **警示系統負責人** | 警示引擎 & API | @alert_lead |
-| **前端負責人** | PC 端 UI & 效能 | @frontend_lead |
-| **DevOps** | 基礎設施 & 部署 | @devops |
-| **項目經理** | 進度 & 溝通 | @pm |
+| 角色               | 責任            | 聯繫           |
+| ------------------ | --------------- | -------------- |
+| **後端負責人**     | 財報模組 & 架構 | @backend_lead  |
+| **警示系統負責人** | 警示引擎 & API  | @alert_lead    |
+| **前端負責人**     | PC 端 UI & 效能 | @frontend_lead |
+| **DevOps**         | 基礎設施 & 部署 | @devops        |
+| **項目經理**       | 進度 & 溝通     | @pm            |
 
 ---
 
 ## 緊急聯繫
 
-**系統故障 (生產)**: Slack #incident-response  
-**關鍵問題討論**: 每日 9:30 站會  
+**系統故障 (生產)**: Slack #incident-response
+**關鍵問題討論**: 每日 9:30 站會
 **部署窗口**: 周二/周四 14:00-16:00 UTC
 
 ---
@@ -545,16 +549,19 @@ npm run e2e -- --headed  # 顯示瀏覽器視窗
 ## 📝 Changelog (變更紀錄)
 
 ### 版本歷史
-| 版本 | 日期 | 撰寫人 | 審核人 | 變更內容 |
-| --- | --- | --- | --- | --- |
-| 1.0 | 2026-04-10 | 技術團隊 | 待審核 | 初始版本 |
+
+| 版本 | 日期       | 撰寫人   | 審核人 | 變更內容 |
+| ---- | ---------- | -------- | ------ | -------- |
+| 1.0  | 2026-04-10 | 技術團隊 | 待審核 | 初始版本 |
 
 ### 詳細變更記錄
 
 #### v1.0 (2026-04-10)
+
 **撰寫人**: 技術團隊 | **審核人**: 待審核
 
 **內容**:
+
 - 新增文檔頭部 (Front Matter) 規範資訊
 - 轉換簡體中文至繁體中文
 - 將架構圖從 ASCII 轉換為 Mermaid 格式
@@ -563,5 +570,6 @@ npm run e2e -- --headed  # 顯示瀏覽器視窗
 - 新增完整的 Changelog 部分
 
 ### 下次更新預計
+
 - 開發中期檢查 (2026-04-24)
 - 計劃新增: 性能測試結果、最佳實踐指南、常見問題擴展

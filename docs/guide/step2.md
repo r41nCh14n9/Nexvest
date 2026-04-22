@@ -57,10 +57,10 @@ pipeline:
                         -H "Content-Type: application/json" \
                         -d '{"model":"gpt-4o-mini","prompt":"'$prompt'","max_tokens":50}')
                       echo "AI response: $resp"
-
 ```
 
 說明：
+
 - `$OLLAMA_HOST` 可由 Delegate 或步驟的環境變數注入（使用 Harness Secrets/Variables）
 - 若你的 Ollama endpoint API 不同，請依實際 API 調整 `curl` payload
 
@@ -83,6 +83,6 @@ pipeline:
 
 ## Changelog
 
-| 版本 | 日期 | 撰寫人 | 變更內容 |
-| --- | --- | --- | --- |
-| 1.0 | 2026-04-20 | Nexvest 團隊 | 初版：Ollama 串接與 Pipeline 範例 |
+| 版本 | 日期       | 撰寫人       | 變更內容                          |
+| ---- | ---------- | ------------ | --------------------------------- |
+| 1.0  | 2026-04-20 | Nexvest 團隊 | 初版：Ollama 串接與 Pipeline 範例 |

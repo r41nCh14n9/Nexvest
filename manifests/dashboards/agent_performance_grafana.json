@@ -1,0 +1,8 @@
+{
+  "dashboard": {
+    "id": null,
+    "title": "Agent Performance - Example",
+    "panels": [],
+    "schemaVersion": 16
+  }
+}

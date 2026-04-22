@@ -1,0 +1,98 @@
+name: Agent CI
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  lint-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+
+      - name: Install Python deps
+        run: |
+          python -m pip install --upgrade pip
+          if [ -f tools/requirements-dev.txt ]; then pip install -r tools/requirements-dev.txt; fi
+
+      - name: Install markdownlint-cli
+        run: |
+          npm install -g markdownlint-cli
+
+      - name: Run pre-commit
+        run: |
+          pip install pre-commit || true
+          pre-commit run --all-files --show-diff-on-failure || exit 1
+
+      - name: Run Python format & lint
+        run: |
+          python -m black --check . || exit 1
+          python -m flake8 || exit 1
+
+      - name: Run Prettier check (if present)
+        run: |
+          if command -v prettier >/dev/null 2>&1; then prettier --check "**/*.{js,ts,jsx,tsx,json,md,css,scss}" || exit 1; fi
+
+      - name: Markdown lint
+        run: |
+          markdownlint "**/*.md" || exit 1
+
+      - name: Run tests
+        run: |
+          pytest -q || exit 1
+
+  agent-ci-check:
+    name: Agent CI
+    runs-on: ubuntu-latest
+    needs: [lint-and-test] #, harness-checks]
+      # always run so this job can report a single, consistent status for branch-protection
+    if: ${{ always() }}
+    steps:
+      - name: Report overall status
+        run: |
+          echo "lint-and-test result=${{ needs.lint-and-test.result }}"
+          # harness-checks may be skipped when PR has no 'harness' label
+          echo "harness-checks result=${{ needs.harness-checks.result }}"
+
+          if [ "${{ needs.lint-and-test.result }}" != "success" ]; then
+            echo "One or more required jobs failed (lint-and-test)."
+            exit 1
+          fi
+
+          if [ "${{ needs.harness-checks.result }}" = "failure" ]; then
+            echo "harness-checks failed."
+            exit 1
+          fi
+
+          echo "All required checks passed."
+  # harness-checks:
+  #   # Runs extra harness/production-harness checks when PR labeled with 'harness'
+  #   if: contains(join(github.event.pull_request.labels.*.name, ' '), 'harness')
+  #   runs-on: ubuntu-latest
+  #   needs: lint-and-test
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - name: Set up Python
+  #       uses: actions/setup-python@v4
+  #       with:
+  #         python-version: "3.10"
+  #     - name: Install deps
+  #       run: |
+  #         python -m pip install --upgrade pip
+  #         pip install -r tools/requirements-dev.txt
+  #     - name: Run harness tests
+  #       run: |
+  #         pytest -q
+  #     - name: Check harness docs exist
+  #       run: |
+  #         test -f docs/agents/AGENTS_LEVEL3.md || (echo "Missing docs/agents/AGENTS_LEVEL3.md" && exit 1)
