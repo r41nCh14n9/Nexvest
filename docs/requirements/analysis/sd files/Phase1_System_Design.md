@@ -1211,7 +1211,7 @@ Dashboards (仪表板)
 
 **认证**: 所有 API 需要在 Header 中提供 Bearer Token
 
-```
+```text
 Authorization: Bearer {JWT_TOKEN}
 ```
 

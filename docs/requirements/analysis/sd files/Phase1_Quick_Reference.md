@@ -487,7 +487,7 @@ psql -h localhost -U postgres -d nexvest -c "SELECT 1"
 docker-compose restart api
 ```
 
-**問題: Redis 無法連線**
+#### 問題: Redis 無法連線
 
 ```bash
 # 檢查 Redis 狀態
@@ -500,7 +500,7 @@ redis-cli -h localhost ping  # 應返回 PONG
 redis-cli FLUSHALL
 ```
 
-**問題: 前端頁面空白**
+#### 問題: 前端頁面空白
 
 ```bash
 # 1. 檢查瀏覽器控制台是否有錯誤
@@ -511,7 +511,7 @@ curl http://localhost:3000/health
 # 4. 檢查網路請求 (Network 標籤)
 ```
 
-**問題: 測試失敗**
+#### 問題: 測試失敗
 
 ```bash
 # 後端測試

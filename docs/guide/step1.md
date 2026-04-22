@@ -27,7 +27,7 @@
 
 ## 檔案/目錄建議結構
 
-```
+```text
 harness-sandbox/
   ├─ pipelines/
   │   └─ hello-world-pipeline.yaml
@@ -98,7 +98,7 @@ git init
 mkdir pipelines
 ```
 
-2. 把上面的 `hello-world-pipeline.yaml` 儲存到 `pipelines/` 後，提交至你的遠端 repo：
+1. 把上面的 `hello-world-pipeline.yaml` 儲存到 `pipelines/` 後，提交至你的遠端 repo：
 
 ```bash
 git add pipelines/hello-world-pipeline.yaml
@@ -107,11 +107,11 @@ git remote add origin <your-repo-url>
 git push -u origin main
 ```
 
-3. 在 Harness UI 中建立或設定一個 Project/Connector，連接你的 Git repository（或使用 Harness 的 GitOps 流程）。
+1. 在 Harness UI 中建立或設定一個 Project/Connector，連接你的 Git repository（或使用 Harness 的 GitOps 流程）。
 
 4. 從 Harness UI 匯入或建立新 Pipeline，選擇 YAML 檔案路徑 `pipelines/hello-world-pipeline.yaml`，並儲存。
 
-5. 手動執行 Pipeline（Run），觀察執行結果與 `Print Hello` 步驟輸出是否顯示 `Hello from Harness!`。
+1. 手動執行 Pipeline（Run），觀察執行結果與 `Print Hello` 步驟輸出是否顯示 `Hello from Harness!`。
 
 ## 驗證與疑難排解
 
