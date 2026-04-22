@@ -69,21 +69,19 @@ pipeline:
                     echo "Hello from Harness!"
 ```
 
-    ### 前置作業（建議步驟）
+### 前置作業（建議步驟）
 
-    1. 建立專案資料夾並初始化 git（例如 `harness-sandbox`）
-    2. 在 GitHub 建立 repo 並將本機 repo push 上去；設定 branch 保護（protected branch）視需要
-    3. 在 Harness 中建立 Project 並確認有權限存取（建立 Connector、Agent 等）
-    4. 如使用本地測試，啟動 Docker Desktop → 建立 local cluster（`kind create cluster` 或 `minikube start`）
-    5. 確認 `kubectl` 可連到 cluster：`kubectl config current-context` 與 `kubectl get nodes`
-    6. 建立一個用於 GitOps 的目錄結構（例如 `gitops/overrides` 或 `manifests/dev`）以存放要被監看的檔案
-    7. 如果 `override.yaml` 含敏感值，請不要直接 commit 到公開 repo；改用 Kubernetes Secret 或 Harness Secrets 管理
+1. 建立專案資料夾並初始化 git（例如 `harness-sandbox`）
+2. 在 GitHub 建立 repo 並將本機 repo push 上去；設定 branch 保護（protected branch）視需要
+3. 在 Harness 中建立 Project 並確認有權限存取（建立 Connector、Agent 等）
+4. 如使用本地測試，啟動 Docker Desktop → 建立 local cluster（`kind create cluster` 或 `minikube start`）
+5. 確認 `kubectl` 可連到 cluster：`kubectl config current-context` 與 `kubectl get nodes`
+6. 建立一個用於 GitOps 的目錄結構（例如 `gitops/overrides` 或 `manifests/dev`）以存放要被監看的檔案
+7. 如果 `override.yaml` 含敏感值，請不要直接 commit 到公開 repo；改用 Kubernetes Secret 或 Harness Secrets 管理
 
-    ### 快速檢查指令
+### 快速檢查指令
 
-    ```bash
-
-注意：不同 Harness 版本/安裝方式（Cloud vs On-prem）與 Provider 可能會有細節差異，請以你帳號下的 Pipeline Schema 為準。
+> 注意：不同 Harness 版本/安裝方式（Cloud vs On-prem）與 Provider 可能會有細節差異，請以你帳號下的 Pipeline Schema 為準。
 
 ## 操作步驟（高階）
 
@@ -91,27 +89,25 @@ pipeline:
 
    建議建立一個專案目錄，例如 `harness-sandbox` 來放置 YAML 與範例
 
-```bash
-mkdir harness-sandbox
-cd harness-sandbox
-git init
-mkdir pipelines
-```
+   ```bash
+   mkdir harness-sandbox
+   cd harness-sandbox
+   git init
+   mkdir pipelines
+   ```
 
-1. 把上面的 `hello-world-pipeline.yaml` 儲存到 `pipelines/` 後，提交至你的遠端 repo：
+2. 把上面的 `hello-world-pipeline.yaml` 儲存到 `pipelines/` 後，提交至你的遠端 repo：
 
-```bash
-git add pipelines/hello-world-pipeline.yaml
-git commit -m "Add Hello World pipeline"
-git remote add origin <your-repo-url>
-git push -u origin main
-```
+   ```bash
+   git add pipelines/hello-world-pipeline.yaml
+   git commit -m "Add Hello World pipeline"
+   git remote add origin <your-repo-url>
+   git push -u origin main
+   ```
 
-1. 在 Harness UI 中建立或設定一個 Project/Connector，連接你的 Git repository（或使用 Harness 的 GitOps 流程）。
-
+3. 在 Harness UI 中建立或設定一個 Project/Connector，連接你的 Git repository（或使用 Harness 的 GitOps 流程）。
 4. 從 Harness UI 匯入或建立新 Pipeline，選擇 YAML 檔案路徑 `pipelines/hello-world-pipeline.yaml`，並儲存。
-
-1. 手動執行 Pipeline（Run），觀察執行結果與 `Print Hello` 步驟輸出是否顯示 `Hello from Harness!`。
+5. 手動執行 Pipeline（Run），觀察執行結果與 `Print Hello` 步驟輸出是否顯示 `Hello from Harness!`。
 
 ## 驗證與疑難排解
 
