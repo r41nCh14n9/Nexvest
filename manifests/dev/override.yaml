@@ -57,7 +57,7 @@ harness:
 argo-cd:
   enabled: true
 
-# <---Argo CD configuration overrides--->
+  # <---Argo CD configuration overrides--->
 
   ## IMPORTANT: Mark crds as false for Helm installations if they are already installed in the cluster
   crds:
@@ -96,7 +96,7 @@ argo-cd:
         tag: v0.5.0
 
   repoServer:
-    replicas:  2
+    replicas: 2
     env:
       - name: HELM_PLUGINS
         value: /helm-sops-tools/helm-plugins/
@@ -127,7 +127,7 @@ argo-cd:
       - name: sops-helm-secrets-tool
         image: docker.io/harness/gitops-agent-installer-helper:v0.0.13
         imagePullPolicy: IfNotPresent
-        command: [ sh, -ec ]
+        command: [sh, -ec]
         args:
           - |
             cp -r /custom-tools/. /helm-sops-tools
@@ -139,7 +139,7 @@ argo-cd:
           - mountPath: /helm-sops-tools
             name: helm-sops-tools
     extraContainers:
-      - command: [ /var/run/argocd/argocd-cmp-server ]
+      - command: [/var/run/argocd/argocd-cmp-server]
         image: docker.io/harness/gitops-agent-installer-helper:v0.0.13
         imagePullPolicy: IfNotPresent
         name: argocd-harness-plugin
