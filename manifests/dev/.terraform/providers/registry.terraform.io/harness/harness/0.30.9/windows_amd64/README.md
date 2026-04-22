@@ -15,8 +15,8 @@ If you have any questions please open a [new issue](https://github.com/harness/t
 
 ## Requirements
 
--	[Terraform](https://www.terraform.io/downloads.html) >= 0.13.x
--	[Go](https://golang.org/doc/install) >= 1.17
+- [Terraform](https://www.terraform.io/downloads.html) >= 0.13.x
+- [Go](https://golang.org/doc/install) >= 1.17
 
 ## Documentation
 
@@ -45,4 +45,4 @@ cp terraform-provider-harness ~/.terraform.d/plugins/$source/$version/$platform/
 
 5. Run the Bash Script `./local.sh`
 
-*Note: Please make sure the terraform provider version matches the version in the script*
+_Note: Please make sure the terraform provider version matches the version in the script_

@@ -47,21 +47,27 @@ Harness 不是寫應用程式的工具，主要負責以下三類工作：
 ## 0.4 主要概念速記
 
 ### Connector
+
 用來安全連接外部系統，例如 Git、K8s、Docker Registry、Ollama API。
 
 ### Delegate
+
 運行在你的環境中的執行代理，負責實際跑 Step。
 
 ### Environment
+
 Harness 中的部署環境定義，例如 `dev`、`test`、`prod`。
 
 ### Service Account / RBAC
+
 定義 Pipeline 的執行權限與資源存取範圍。
 
 ### Policy as Code
+
 使用規則檔（例如 Rego）強制要求 Pipeline/部署符合公司標準。
 
 ### Template / Skill
+
 可重用的步驟或 Stage 模板，避免重複定義流程。
 
 ---

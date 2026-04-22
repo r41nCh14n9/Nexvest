@@ -87,7 +87,6 @@ pipeline:
                                   image: <YOUR_REGISTRY>/hello:latest
                                   ports:
                                     - containerPort: 8080
-
 ```
 
 ## 驗證
@@ -108,6 +107,6 @@ pipeline:
 
 ## Changelog
 
-| 版本 | 日期 | 撰寫人 | 變更內容 |
-| --- | --- | --- | --- |
-| 1.0 | 2026-04-20 | Nexvest 團隊 | 初版：Delegate 與 dev 部署指南 |
+| 版本 | 日期       | 撰寫人       | 變更內容                       |
+| ---- | ---------- | ------------ | ------------------------------ |
+| 1.0  | 2026-04-20 | Nexvest 團隊 | 初版：Delegate 與 dev 部署指南 |

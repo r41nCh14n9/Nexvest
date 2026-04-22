@@ -71,10 +71,10 @@ pipeline:
           execution:
             steps:
               - step: { /* deploy step, e.g., KubernetesApply */ }
-
 ```
 
 說明：
+
 - 若 `Run Unit Tests` 失敗，Pipeline 停止且不會進入 `Deploy Stage`。
 
 ## 整合測試（高階流程）
@@ -90,7 +90,7 @@ pipeline:
 name: CI
 on:
   push:
-    branches: [ main ]
+    branches: [main]
 jobs:
   push:
     runs-on: ubuntu-latest
@@ -103,7 +103,6 @@ jobs:
       - name: Trigger Harness (optional)
         run: |
           curl -X POST https://<harness-webhook-or-manager>/trigger -H "Authorization: Bearer ${{ secrets.HARNESS_TOKEN }}" -d '{"pipeline":"test_deploy"}'
-
 ```
 
 ## 驗證與回饋
@@ -118,6 +117,6 @@ jobs:
 
 ## Changelog
 
-| 版本 | 日期 | 撰寫人 | 變更內容 |
-| --- | --- | --- | --- |
-| 1.0 | 2026-04-20 | Nexvest 團隊 | 初版：單元測試與整合測試整合範例 |
+| 版本 | 日期       | 撰寫人       | 變更內容                         |
+| ---- | ---------- | ------------ | -------------------------------- |
+| 1.0  | 2026-04-20 | Nexvest 團隊 | 初版：單元測試與整合測試整合範例 |

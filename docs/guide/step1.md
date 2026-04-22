@@ -46,7 +46,7 @@ flowchart TD
 
 下方為一個簡易範例（示意用途，依你使用的 Harness 版本與 schema 可能要做少量調整）：
 
-```yaml
+````yaml
 # pipelines/hello-world-pipeline.yaml
 pipeline:
   name: Hello World Pipeline
@@ -83,7 +83,7 @@ pipeline:
                     command: |
                       echo "Hello from Harness!"
 
-```
+````
 
     ### 前置作業（建議步驟）
 
@@ -105,8 +105,8 @@ pipeline:
 
 1. 在本機建立專案資料夾並初始化 git：
 
+   建議建立一個專案目錄，例如 `harness-sandbox` 來放置 YAML 與範例
 
-    建議建立一個專案目錄，例如 `harness-sandbox` 來放置 YAML 與範例
 ```bash
 mkdir harness-sandbox
 cd harness-sandbox
@@ -147,6 +147,6 @@ git push -u origin main
 
 ## Changelog
 
-| 版本 | 日期 | 撰寫人 | 變更內容 |
-| --- | --- | --- | --- |
-| 1.0 | 2026-04-20 | Nexvest 團隊 | 初版：建立 Hello World Pipeline 指南 |
+| 版本 | 日期       | 撰寫人       | 變更內容                             |
+| ---- | ---------- | ------------ | ------------------------------------ |
+| 1.0  | 2026-04-20 | Nexvest 團隊 | 初版：建立 Hello World Pipeline 指南 |

@@ -17,6 +17,7 @@
 ---
 
 ## 目錄
+
 1. [Phase 1 概述](#phase-1-概述)
 2. [需求分析](#需求分析)
 3. [總體架構設計](#總體架構設計)
@@ -34,17 +35,20 @@
 ## Phase 1 概述
 
 ### 目標定位
+
 將 Nexvest 從概念驗證升級為** MVP (最小可行產品)**，在 6 週內推出四大核心功能，覆蓋 90% 的目標用戶。
 
 ### 四大核心功能
-| 功能 | 代號 | 優先級 | 覆蓋率 | 開發週期 |
-| --- | --- | --- | --- | --- |
-| 視覺化財報健檢 | P1-1 | 最高 | 100% | 2w |
-| 進階策略警示系統 | P1-2 | 最高 | 60% | 2w |
-| 抗噪新聞資訊流 | P1-3 | 最高 | 100% | 1.5w |
-| 自定義儀表板 | P1-4 | 高 | 100% | 1w |
+
+| 功能             | 代號 | 優先級 | 覆蓋率 | 開發週期 |
+| ---------------- | ---- | ------ | ------ | -------- |
+| 視覺化財報健檢   | P1-1 | 最高   | 100%   | 2w       |
+| 進階策略警示系統 | P1-2 | 最高   | 60%    | 2w       |
+| 抗噪新聞資訊流   | P1-3 | 最高   | 100%   | 1.5w     |
+| 自定義儀表板     | P1-4 | 高     | 100%   | 1w       |
 
 ### 成功指標
+
 - **DAU**: 5,000+ (日活躍用戶)
 - **頁面加載時間**: < 2s (P95)
 - **服務可用性**: 99.5%
@@ -64,6 +68,7 @@
 **功能目标**: 一秒看出公司各项关键指标的健康度
 
 **核心指标** (5 点制电灯号)：
+
 ```
 健康度评分模型：
 ├─ 盈利能力 (20%)
@@ -86,12 +91,14 @@
 ```
 
 **主要特性**:
+
 - 5 年 / 10 年历史趋势对比
 - 电灯号标示 (红/黄/绿)
 - 同业对标对比
 - 关键指标预警
 
 **关键场景**:
+
 - 盘中快速查看一只股票的财务状况
 - 对比同业了解相对位置
 - 识别财务恶化的公司
@@ -106,22 +113,24 @@
 
 **警示类型**:
 
-| 类型 | 触发条件 | 数据源 | 推送优先级 |
-| --- | --- | --- | --- |
-| 价格警示 | 跌破/超过价格阈值 | 实时行情 | 高 |
-| 技术面警示 | 黄金交叉、死亡交叉、突破均线 | 技术指标 | 高 |
-| 成交量警示 | 异常放大 (> 平均 2 倍) | 成交数据 | 中 |
-| 均线警示 | 跌破关键均线 (20/50/200) | 技术指标 | 中 |
-| 基本面警示 | 财报发布、ROE 异常 | 企业公告 | 高 |
-| 市场情绪警示 | VIX > 阈值、机构异常 | 市场数据 | 中 |
+| 类型         | 触发条件                     | 数据源   | 推送优先级 |
+| ------------ | ---------------------------- | -------- | ---------- |
+| 价格警示     | 跌破/超过价格阈值            | 实时行情 | 高         |
+| 技术面警示   | 黄金交叉、死亡交叉、突破均线 | 技术指标 | 高         |
+| 成交量警示   | 异常放大 (> 平均 2 倍)       | 成交数据 | 中         |
+| 均线警示     | 跌破关键均线 (20/50/200)     | 技术指标 | 中         |
+| 基本面警示   | 财报发布、ROE 异常           | 企业公告 | 高         |
+| 市场情绪警示 | VIX > 阈值、机构异常         | 市场数据 | 中         |
 
 **主要特性**:
+
 - 手动设置与预设模板并存
 - AND/OR 逻辑组合
 - 推送渠道 (应用内 + 移动推送)
 - 警示历史记录查询
 
 **关键场景**:
+
 - 设置价格预警，触发后立即通知
 - 组合多个技术面条件
 - 追踪法人动向
@@ -136,14 +145,15 @@
 
 **新闻源分级**:
 
-| 级别 | 来源示例 | 权重 | 是否自动展示 |
-| --- | --- | --- | --- |
-| 一级 | 官方公告、SEC 申报、财报 | 100% | 是 |
-| 二级 | 彭博社、路透社、英国金融时报 | 80% | 是 |
-| 三级 | 主流商业媒体 | 60% | 可选 |
-| 过滤 | 农场标题、特定黑名单媒体 | 0% | 否 |
+| 级别 | 来源示例                     | 权重 | 是否自动展示 |
+| ---- | ---------------------------- | ---- | ------------ |
+| 一级 | 官方公告、SEC 申报、财报     | 100% | 是           |
+| 二级 | 彭博社、路透社、英国金融时报 | 80%  | 是           |
+| 三级 | 主流商业媒体                 | 60%  | 可选         |
+| 过滤 | 农场标题、特定黑名单媒体     | 0%   | 否           |
 
 **主要特性**:
+
 - 多源新闻聚合 (彭博、路透、官方公告、雪球等)
 - AI 关键字提取与摘要 (初版: 标题 + 3 行摘要)
 - 情绪标签 (正面/中性/负面)
@@ -151,6 +161,7 @@
 - 按重要性与相关性排序
 
 **关键场景**:
+
 - 快速浏览关注股票的相关新闻
 - 排除垃圾信息
 - 掌握产业动向
@@ -164,6 +175,7 @@
 **功能目标**: Widget 式模块化设计，支持拖放编辑
 
 **预设 Widget 集**:
+
 - 持股绩效卡片
 - 大盘指数快视
 - 自选股票清单
@@ -173,12 +185,14 @@
 - 财报健检卡片
 
 **主要特性**:
+
 - 拖放编辑
 - 多视图保存 ("盘中快查" vs "深度研究")
 - 预设模板库
 - 响应式设计
 
 **关键场景**:
+
 - 盘中快速查阅关键信息
 - 创建个人化首页
 - 保存多套不同配置
@@ -187,13 +201,13 @@
 
 ### 非功能需求
 
-| 维度 | 目标 | 实现方案 |
-| --- | --- | --- |
-| **性能** | 页面加载 < 2s, 警示 < 30s | CDN + 缓存 + 异步队列 |
-| **安全** | TLS 1.3 + AES-256 + MFA | 端到端加密 |
-| **可用性** | 99.5% uptime | 主从复制 + 自动转移 |
-| **扩展性** | 10 万 CCU | 微服务 + 水平扩展 |
-| **可观测性** | 完整日志 + 监控告警 | Prometheus + Grafana + ELK |
+| 维度         | 目标                      | 实现方案                   |
+| ------------ | ------------------------- | -------------------------- |
+| **性能**     | 页面加载 < 2s, 警示 < 30s | CDN + 缓存 + 异步队列      |
+| **安全**     | TLS 1.3 + AES-256 + MFA   | 端到端加密                 |
+| **可用性**   | 99.5% uptime              | 主从复制 + 自动转移        |
+| **扩展性**   | 10 万 CCU                 | 微服务 + 水平扩展          |
+| **可观测性** | 完整日志 + 监控告警       | Prometheus + Grafana + ELK |
 
 ---
 
@@ -298,10 +312,12 @@ graph TB
     style DS3 fill:#e8f5e9
     style DS4 fill:#e8f5e9
 ```
+
     ├──────────────────────────────────────────────────────────┤
     │  行情源 → 新闻源 → 财报源 → 企业数据源                     │
     └──────────────────────────────────────────────────────────┘
-```
+
+````
 
 ### 数据流向
 
@@ -348,7 +364,7 @@ flowchart TD
     style FE fill:#e1f5ff
     style Feed fill:#e1f5ff
     style Resp fill:#e1f5ff
-```
+````
 
 ---
 
@@ -356,41 +372,41 @@ flowchart TD
 
 ### 后端技术栈
 
-| 层级 | 技术选型 | 理由 |
-| --- | --- | --- |
-| **应用服务** | Node.js + Nest.js | 快速开发，活跃社区，事件驱动天然契合 |
-| **关系型 DB** | PostgreSQL 14+ | 稳定性好，支持 JSONB，扩展性强 |
-| **时序 DB** | InfluxDB 2.x | 高性能时序存储，适合行情 K 线数据 |
-| **缓存** | Redis 7 (Cluster) | 分布式缓存，高性能，支持多数据结构 |
-| **消息队列** | Kafka 3.x | 高吞吐，可靠消息传递，支持分布式计算 |
-| **搜索引擎** | Elasticsearch 8.x | 全文搜索，实时分析，适合新闻搜索 |
-| **容器化** | Docker + Kubernetes | 标准化部署，自动扩展，易于运维 |
-| **CI/CD** | GitHub Actions | 与 GitHub 集成，支持多环境流水线 |
-| **监控** | Prometheus + Grafana | 开源标准，支持自定义指标，告警完善 |
-| **日志** | ELK Stack (Elasticsearch + Logstash + Kibana) | 分布式日志聚合，强大的查询分析 |
+| 层级          | 技术选型                                      | 理由                                 |
+| ------------- | --------------------------------------------- | ------------------------------------ |
+| **应用服务**  | Node.js + Nest.js                             | 快速开发，活跃社区，事件驱动天然契合 |
+| **关系型 DB** | PostgreSQL 14+                                | 稳定性好，支持 JSONB，扩展性强       |
+| **时序 DB**   | InfluxDB 2.x                                  | 高性能时序存储，适合行情 K 线数据    |
+| **缓存**      | Redis 7 (Cluster)                             | 分布式缓存，高性能，支持多数据结构   |
+| **消息队列**  | Kafka 3.x                                     | 高吞吐，可靠消息传递，支持分布式计算 |
+| **搜索引擎**  | Elasticsearch 8.x                             | 全文搜索，实时分析，适合新闻搜索     |
+| **容器化**    | Docker + Kubernetes                           | 标准化部署，自动扩展，易于运维       |
+| **CI/CD**     | GitHub Actions                                | 与 GitHub 集成，支持多环境流水线     |
+| **监控**      | Prometheus + Grafana                          | 开源标准，支持自定义指标，告警完善   |
+| **日志**      | ELK Stack (Elasticsearch + Logstash + Kibana) | 分布式日志聚合，强大的查询分析       |
 
 ### 前端技术栈
 
-| 层级 | 技术选型 | 理由 |
-| --- | --- | --- |
-| **Web 框架** | Vue 3 + Vite | 组件开发效率高，构建速度快 |
-| **UI 组件库** | Element Plus / Ant Design Vue | 专业财务应用级 UI 库 |
-| **图表库** | ECharts 5 | 金融图表支持完善，性能优 |
-| **HTTP 客户端** | Axios | 简洁易用，请求/响应拦截 |
-| **状态管理** | Pinia | 轻量级，Vue 3 官方推荐 |
-| **路由** | Vue Router 4 | 官方支持，完整功能 |
-| **移动端** | React Native (初期) 或 Flutter (可选) | 跨平台代码复用 |
-| **包管理** | pnpm | 快速高效，节省磁盘空间 |
-| **编译/压缩** | Esbuild (Vite 内置) | 超快编译速度 |
+| 层级            | 技术选型                              | 理由                       |
+| --------------- | ------------------------------------- | -------------------------- |
+| **Web 框架**    | Vue 3 + Vite                          | 组件开发效率高，构建速度快 |
+| **UI 组件库**   | Element Plus / Ant Design Vue         | 专业财务应用级 UI 库       |
+| **图表库**      | ECharts 5                             | 金融图表支持完善，性能优   |
+| **HTTP 客户端** | Axios                                 | 简洁易用，请求/响应拦截    |
+| **状态管理**    | Pinia                                 | 轻量级，Vue 3 官方推荐     |
+| **路由**        | Vue Router 4                          | 官方支持，完整功能         |
+| **移动端**      | React Native (初期) 或 Flutter (可选) | 跨平台代码复用             |
+| **包管理**      | pnpm                                  | 快速高效，节省磁盘空间     |
+| **编译/压缩**   | Esbuild (Vite 内置)                   | 超快编译速度               |
 
 ### 数据处理与分析
 
-| 功能 | 技术选型 | 理由 |
-| --- | --- | --- |
-| **财报指标计算** | Python Pandas + Polars | 向量化计算，性能高 |
-| **机器学习 (初期)** | Scikit-learn | 轻量级，无需依赖复杂框架 |
-| **数据仓库** | Clickhouse (未来) | 分析型 DB，支持 OLAP 查询 |
-| **数据管道** | Airflow (未来) | 工作流编排，任务调度 |
+| 功能                | 技术选型               | 理由                      |
+| ------------------- | ---------------------- | ------------------------- |
+| **财报指标计算**    | Python Pandas + Polars | 向量化计算，性能高        |
+| **机器学习 (初期)** | Scikit-learn           | 轻量级，无需依赖复杂框架  |
+| **数据仓库**        | Clickhouse (未来)      | 分析型 DB，支持 OLAP 查询 |
+| **数据管道**        | Airflow (未来)         | 工作流编排，任务调度      |
 
 ---
 
@@ -399,6 +415,7 @@ flowchart TD
 ### P1-1: 财报健检系统
 
 #### 功能模块结构
+
 ```
 PortfolioModule
 ├── Controllers
@@ -469,7 +486,7 @@ function mapScoreToLevel(score: number): 'green' | 'yellow' | 'red' {
 {
   "code": 200,
   "data": {
-    "symbol": "2330",  // TSMC
+    "symbol": "2330", // TSMC
     "name": "台积电",
     "health_check": {
       "current_score": 4.2,
@@ -514,17 +531,15 @@ function mapScoreToLevel(score: number): 'green' | 'yellow' | 'red' {
         }
       },
       "historical_trend": [
-        {"date": "2024-12-31", "score": 4.0},
-        {"date": "2025-03-31", "score": 4.1},
-        {"date": "2026-04-10", "score": 4.2}
+        { "date": "2024-12-31", "score": 4.0 },
+        { "date": "2025-03-31", "score": 4.1 },
+        { "date": "2026-04-10", "score": 4.2 }
       ],
       "peer_comparison": {
         "industry_avg": 3.8,
         "rank": "top 15%"
       },
-      "warning_indicators": [
-        "毛利率下降 2.3pp (相比上季度)"
-      ]
+      "warning_indicators": ["毛利率下降 2.3pp (相比上季度)"]
     }
   }
 }
@@ -587,6 +602,7 @@ CREATE TABLE fundamental_history (
 ### P1-2: 进阶策略警示系统
 
 #### 功能模块结构
+
 ```
 AlertModule
 ├── Controllers
@@ -779,6 +795,7 @@ async function pushNotification(
 ### P1-3: 抗噪新闻资讯流
 
 #### 功能模块结构
+
 ```
 NewsModule
 ├── Controllers
@@ -957,6 +974,7 @@ async function generateNewsSummary(news: News): Promise<string> {
 ### P1-4: 自定义仪表板系统
 
 #### 功能模块结构
+
 ```
 DashboardModule
 ├── Controllers
@@ -1003,7 +1021,7 @@ DashboardModule
         "show_change_percent": true,
         "show_profit_loss": true
       },
-      "grid": {"x": 0, "y": 0, "w": 6, "h": 3},
+      "grid": { "x": 0, "y": 0, "w": 6, "h": 3 },
       "refresh_interval": 30000
     },
     {
@@ -1013,7 +1031,7 @@ DashboardModule
       "config": {
         "indices": ["TAIEX", "NASDAQ", "HSI"]
       },
-      "grid": {"x": 6, "y": 0, "w": 6, "h": 3},
+      "grid": { "x": 6, "y": 0, "w": 6, "h": 3 },
       "refresh_interval": 30000
     },
     {
@@ -1024,7 +1042,7 @@ DashboardModule
         "display_columns": ["symbol", "price", "change", "volume"],
         "sort_by": "change_desc"
       },
-      "grid": {"x": 0, "y": 3, "w": 12, "h": 4},
+      "grid": { "x": 0, "y": 3, "w": 12, "h": 4 },
       "refresh_interval": 30000
     },
     {
@@ -1035,7 +1053,7 @@ DashboardModule
         "show_unread_only": true,
         "time_range": "24h"
       },
-      "grid": {"x": 0, "y": 7, "w": 6, "h": 3},
+      "grid": { "x": 0, "y": 7, "w": 6, "h": 3 },
       "refresh_interval": 60000
     },
     {
@@ -1046,7 +1064,7 @@ DashboardModule
         "source_level": ["一级", "二级"],
         "limit": 5
       },
-      "grid": {"x": 6, "y": 7, "w": 6, "h": 3},
+      "grid": { "x": 6, "y": 7, "w": 6, "h": 3 },
       "refresh_interval": 300000
     }
   ],
@@ -1194,11 +1212,13 @@ Dashboards (仪表板)
 **Base URL**: `https://api.nexvest.com/v1`
 
 **认证**: 所有 API 需要在 Header 中提供 Bearer Token
+
 ```
 Authorization: Bearer {JWT_TOKEN}
 ```
 
 **响应格式**:
+
 ```json
 {
   "code": 200,
@@ -1421,7 +1441,7 @@ nexvest-web/
           <div class="score-bar">
             <div
               class="score-fill"
-              :style="{width: (score.score / 10) * 100 + '%'}"
+              :style="{ width: (score.score / 10) * 100 + '%' }"
             ></div>
           </div>
           <span class="score-value">{{ score.score.toFixed(1) }}</span>
@@ -1436,8 +1456,15 @@ nexvest-web/
 
     <!-- 同业对比 -->
     <div class="peer-comparison">
-      <p>行业对标: <strong>{{ fundamental.peer_comparison.industry_avg.toFixed(2) }}</strong></p>
-      <p>排名: <strong>{{ fundamental.peer_comparison.rank }}</strong></p>
+      <p>
+        行业对标:
+        <strong>{{
+          fundamental.peer_comparison.industry_avg.toFixed(2)
+        }}</strong>
+      </p>
+      <p>
+        排名: <strong>{{ fundamental.peer_comparison.rank }}</strong>
+      </p>
     </div>
 
     <!-- 预警事项 -->
@@ -1453,34 +1480,34 @@ nexvest-web/
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
-import HealthScoreMeter from './HealthScoreMeter.vue';
-import TrendChart from './TrendChart.vue';
+import { defineComponent } from "vue";
+import HealthScoreMeter from "./HealthScoreMeter.vue";
+import TrendChart from "./TrendChart.vue";
 
 export default defineComponent({
-  name: 'FundamentalCard',
+  name: "FundamentalCard",
   components: { HealthScoreMeter, TrendChart },
   props: {
     symbol: String,
     stock: Object,
-    fundamental: Object
+    fundamental: Object,
   },
   data() {
     return {
       scoreLabels: {
-        profitability: '盈利能力',
-        cashflow: '现金流',
-        stability: '财务稳定',
-        growth: '成长性',
-        shareholder_return: '股东回报'
-      }
+        profitability: "盈利能力",
+        cashflow: "现金流",
+        stability: "财务稳定",
+        growth: "成长性",
+        shareholder_return: "股东回报",
+      },
     };
   },
   methods: {
     formatTime(date: string) {
-      return new Date(date).toLocaleString('zh-CN');
-    }
-  }
+      return new Date(date).toLocaleString("zh-CN");
+    },
+  },
 });
 </script>
 
@@ -1569,21 +1596,14 @@ export default defineComponent({
 
     <div class="form-group">
       <label>股票代码</label>
-      <input
-        v-model="form.symbol"
-        placeholder="输入股票代码 (e.g., 2330)"
-      />
+      <input v-model="form.symbol" placeholder="输入股票代码 (e.g., 2330)" />
     </div>
 
     <div class="form-group">
       <label>选择预设模板</label>
       <select v-model="selectedTemplate" @change="loadTemplate">
         <option value="">--自定义规则--</option>
-        <option
-          v-for="tpl in templates"
-          :key="tpl.id"
-          :value="tpl.id"
-        >
+        <option v-for="tpl in templates" :key="tpl.id" :value="tpl.id">
           {{ tpl.name }}
         </option>
       </select>
@@ -1614,21 +1634,21 @@ export default defineComponent({
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
-import RuleNodeEditor from './RuleNodeEditor.vue';
+import { defineComponent } from "vue";
+import RuleNodeEditor from "./RuleNodeEditor.vue";
 
 export default defineComponent({
-  name: 'AlertForm',
+  name: "AlertForm",
   components: { RuleNodeEditor },
   data() {
     return {
       form: {
-        symbol: '',
-        conditions: { operator: 'AND', children: [] },
-        push_enabled: true
+        symbol: "",
+        conditions: { operator: "AND", children: [] },
+        push_enabled: true,
       },
-      selectedTemplate: '',
-      templates: []
+      selectedTemplate: "",
+      templates: [],
     };
   },
   async mounted() {
@@ -1639,12 +1659,12 @@ export default defineComponent({
       try {
         this.templates = await this.$alertService.getTemplates();
       } catch (error) {
-        this.$message.error('加载模板失败');
+        this.$message.error("加载模板失败");
       }
     },
     loadTemplate() {
       if (this.selectedTemplate) {
-        const tpl = this.templates.find(t => t.id === this.selectedTemplate);
+        const tpl = this.templates.find((t) => t.id === this.selectedTemplate);
         if (tpl) {
           this.form.conditions = tpl.conditions;
         }
@@ -1659,21 +1679,21 @@ export default defineComponent({
     async submitForm() {
       try {
         await this.$alertService.createAlert(this.form);
-        this.$message.success('警示创建成功');
+        this.$message.success("警示创建成功");
         this.resetForm();
-        this.$emit('alert-created');
+        this.$emit("alert-created");
       } catch (error) {
-        this.$message.error('创建失败');
+        this.$message.error("创建失败");
       }
     },
     resetForm() {
       this.form = {
-        symbol: '',
-        conditions: { operator: 'AND', children: [] },
-        push_enabled: true
+        symbol: "",
+        conditions: { operator: "AND", children: [] },
+        push_enabled: true,
       };
-    }
-  }
+    },
+  },
 });
 </script>
 
@@ -1692,7 +1712,8 @@ export default defineComponent({
       font-weight: 500;
     }
 
-    input, select {
+    input,
+    select {
       width: 100%;
       padding: 8px 12px;
       border: 1px solid #ddd;
@@ -1851,15 +1872,15 @@ DevOps/基础设施 (1 人)
 
 ### 时间投入估算
 
-| 岗位 | 投入天数 | 备注 |
-| --- | --- | --- |
-| 项目经理 | 42 天 | 全职 |
-| 产品设计 | 30 天 | 需求梳理 + 交互设计 |
-| 后端工程师 (3人) | 126 天 | 3 名 × 42 天 |
-| 前端工程师 (2人) | 84 天 | 2 名 × 42 天 |
-| QA / 测试 | 42 天 | 全职 |
-| DevOps | 42 天 | 全职 |
-| **总计** | **366 人·天** | **约 6 周完成** |
+| 岗位             | 投入天数      | 备注                |
+| ---------------- | ------------- | ------------------- |
+| 项目经理         | 42 天         | 全职                |
+| 产品设计         | 30 天         | 需求梳理 + 交互设计 |
+| 后端工程师 (3人) | 126 天        | 3 名 × 42 天        |
+| 前端工程师 (2人) | 84 天         | 2 名 × 42 天        |
+| QA / 测试        | 42 天         | 全职                |
+| DevOps           | 42 天         | 全职                |
+| **总计**         | **366 人·天** | **约 6 周完成**     |
 
 ---
 
@@ -1867,23 +1888,23 @@ DevOps/基础设施 (1 人)
 
 ### 关键风险
 
-| 风险 | 评级 | 影响 | 缓解策略 |
-| --- | --- | --- | --- |
-| 行情数据源延迟或故障 | 高 | 警示系统无法正常工作 | 多源备份，本地缓存，SLA 监控 |
-| 推送服务可靠性 | 高 | 用户无法接收警示通知 | 多通道推送(App+Email)，重试机制 |
-| 大规模并发下的性能瓶颈 | 中 | > 1 万用户时系统响应缓慢 | 提前做压力测试，数据库读写分离，缓存策略优化 |
-| 新闻爬虫被反爬虫封禁 | 中 | 无法持续获取新闻 | 合法使用 API，设置合理爬取频率，User-Agent 轮换 |
-| LLM API 服务不稳定或成本过高 | 中 | 摘要功能不可用或成本超预算 | 初期只做基础摘要，考虑本地开源模型 |
-| 用户隐私数据泄露 | 非常高 | 法律风险 + 品牌损害 | 完整加密套件，定期安全审计，滑渗透测试 |
+| 风险                         | 评级   | 影响                       | 缓解策略                                        |
+| ---------------------------- | ------ | -------------------------- | ----------------------------------------------- |
+| 行情数据源延迟或故障         | 高     | 警示系统无法正常工作       | 多源备份，本地缓存，SLA 监控                    |
+| 推送服务可靠性               | 高     | 用户无法接收警示通知       | 多通道推送(App+Email)，重试机制                 |
+| 大规模并发下的性能瓶颈       | 中     | > 1 万用户时系统响应缓慢   | 提前做压力测试，数据库读写分离，缓存策略优化    |
+| 新闻爬虫被反爬虫封禁         | 中     | 无法持续获取新闻           | 合法使用 API，设置合理爬取频率，User-Agent 轮换 |
+| LLM API 服务不稳定或成本过高 | 中     | 摘要功能不可用或成本超预算 | 初期只做基础摘要，考虑本地开源模型              |
+| 用户隐私数据泄露             | 非常高 | 法律风险 + 品牌损害        | 完整加密套件，定期安全审计，滑渗透测试          |
 
 ### 技术风险
 
-| 风险 | 缓解策略 |
-| --- | --- |
+| 风险           | 缓解策略                                     |
+| -------------- | -------------------------------------------- |
 | 数据库性能不足 | 使用 PostgreSQL 分片、读写分离、定期性能优化 |
-| Redis 内存不足 | 设置淘汰策略 (LRU)，监控内存使用率 |
-| 消息队列堆积 | Kafka 分片优化，异步处理优化 |
-| 前端加载过慢 | 代码分割，Tree shaking，图片优化，CDN 分发 |
+| Redis 内存不足 | 设置淘汰策略 (LRU)，监控内存使用率           |
+| 消息队列堆积   | Kafka 分片优化，异步处理优化                 |
+| 前端加载过慢   | 代码分割，Tree shaking，图片优化，CDN 分发   |
 
 ---
 
@@ -1892,6 +1913,7 @@ DevOps/基础设施 (1 人)
 **Phase 1 的核心目标**: 在 6 周内推出 MVP，具备四大基础功能，达到 DAU 5000+ 并为后续迭代打好基础。
 
 **关键成功因素**:
+
 1. ✅ 数据品质第一 (宁可少但准确)
 2. ✅ 强化用户反馈循环
 3. ✅ 性能与稳定性并行建设
@@ -1899,6 +1921,7 @@ DevOps/基础设施 (1 人)
 5. ✅ 清晰的团队职责分工
 
 **预期里程碑**:
+
 - **第 2 周**: 财报 + 警示系统可用
 - **第 4 周**: 新闻 + 仪表板可用
 - **第 6 周**: MVP 上线，进入 Beta 测试
@@ -1910,16 +1933,19 @@ DevOps/基础设施 (1 人)
 ## 📝 Changelog (變更紀錄)
 
 ### 版本歷史
-| 版本 | 日期 | 撰寫人 | 審核人 | 變更內容 |
-| --- | --- | --- | --- | --- |
-| 1.0 | 2026-04-10 | 技術團隊 | 待審核 | 初始版本 |
+
+| 版本 | 日期       | 撰寫人   | 審核人 | 變更內容 |
+| ---- | ---------- | -------- | ------ | -------- |
+| 1.0  | 2026-04-10 | 技術團隊 | 待審核 | 初始版本 |
 
 ### 詳細變更記錄
 
 #### v1.0 (2026-04-10)
+
 **撰寫人**: 技術團隊 | **審核人**: 待審核
 
 **內容**:
+
 - 新增文檔頭部 (Front Matter) 規範資訊
 - 轉換簡體中文至繁體中文
 - 優化所有程式碼塊的語言標記
@@ -1927,5 +1953,6 @@ DevOps/基础设施 (1 人)
 - 新增完整的 Changelog 部分
 
 ### 下次更新預計
+
 - 開發中期檢查 (2026-04-24)
 - 計劃新增: 詳細的架構圖、性能測試結果、最佳實踐指南
