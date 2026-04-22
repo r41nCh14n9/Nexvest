@@ -474,7 +474,7 @@ npm run format          # Prettier 格式化
 
 ### 常見問題
 
-**問題: API 回應 500**
+#### 問題: API 回應 500
 
 ```bash
 # 1. 檢查後端日誌

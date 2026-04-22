@@ -1,10 +1,8 @@
----
+______________________________________________________________________
+
 # Step 3: 補齊 Infrastructure、Delegate 與外部系統連接，部署至 `dev` 環境
 
-**文檔類型**: 部署與運維指南
-**版本**: 1.0
-**編制日期**: 2026-04-20
----
+## **文檔類型**: 部署與運維指南 **版本**: 1.0 **編制日期**: 2026-04-20
 
 ## 目標
 
@@ -20,7 +18,7 @@
 ## 安裝與註冊 Delegate（快速指南）
 
 1. 在 Harness UI 中：Project → Setup → Delegates → New Delegate，選擇 Platform（Kubernetes / Self-hosted）
-2. 依指示下載或使用 Helm chart 安裝（若使用 k8s）：
+1. 依指示下載或使用 Helm chart 安裝（若使用 k8s）：
 
 ```bash
 # 範例：使用 Helm 安裝（假設已設定 kubeconfig 指向 dev cluster）
@@ -30,7 +28,7 @@ helm install harness-delegate harness/harness-delegate --namespace harness-deleg
   --set accountId=<YOUR_HARNESS_ACCOUNT_ID> --set managerUrl=<HARNESS_MANAGER_URL> --set token=<DELEGATE_TOKEN>
 ```
 
-3. 等待 Delegate 在 Harness UI 顯示為 `Healthy`。
+1. 等待 Delegate 在 Harness UI 顯示為 `Healthy`。
 
 ## 定義 Environment 與 Infrastructure
 
@@ -92,7 +90,7 @@ pipeline:
 ## 驗證
 
 1. 確認 Delegate 健康且能 reach 外部資源（git、registry、k8s API）。
-2. Run `Deploy to Dev` Pipeline，檢查 Kubernetes 中是否建立 `hello-app` Pod/Deployment。
+1. Run `Deploy to Dev` Pipeline，檢查 Kubernetes 中是否建立 `hello-app` Pod/Deployment。
 
 ## 排錯重點
 
@@ -107,6 +105,5 @@ pipeline:
 
 ## Changelog
 
-| 版本 | 日期       | 撰寫人       | 變更內容                       |
-| ---- | ---------- | ------------ | ------------------------------ |
-| 1.0  | 2026-04-20 | Nexvest 團隊 | 初版：Delegate 與 dev 部署指南 |
+| 版本 | 日期 | 撰寫人 | 變更內容 | | ---- | ---------- | ------------ | ------------------------------ | | 1.0
+| 2026-04-20 | Nexvest 團隊 | 初版：Delegate 與 dev 部署指南 |

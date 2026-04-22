@@ -23,12 +23,10 @@
 3. [總體架構設計](#總體架構設計)
 4. [技術棧選型](#技術棧選型)
 5. [詳細功能設計](#詳細功能設計)
-6. [資料庫設計](#資料庫設計)
+6. [數據庫設計](#數據庫設計)
 7. [API 設計](#api-設計)
 8. [前端架構](#前端架構)
 9. [任務拆分與進度規劃](#任務拆分與進度規劃)
-10. [開發資源分配](#開發資源分配)
-11. [風險與緩解策略](#風險與緩解策略)
 
 ---
 
@@ -36,7 +34,7 @@
 
 ### 目標定位
 
-將 Nexvest 從概念驗證升級為** MVP (最小可行產品)**，在 6 週內推出四大核心功能，覆蓋 90% 的目標用戶。
+將 Nexvest 從概念驗證升級為 **MVP (最小可行產品)**，在 6 週內推出四大核心功能，覆蓋 90% 的目標用戶。
 
 ### 四大核心功能
 
@@ -69,7 +67,7 @@
 
 **核心指标** (5 点制电灯号)：
 
-```
+```plaintext
 健康度评分模型：
 ├─ 盈利能力 (20%)
 │  ├─ ROE
@@ -313,11 +311,11 @@ graph TB
     style DS4 fill:#e8f5e9
 ```
 
+```plaintext
     ├──────────────────────────────────────────────────────────┤
     │  行情源 → 新闻源 → 财报源 → 企业数据源                     │
     └──────────────────────────────────────────────────────────┘
-
-````
+```
 
 ### 数据流向
 
@@ -416,7 +414,7 @@ flowchart TD
 
 #### 功能模块结构
 
-```
+```plaintext
 PortfolioModule
 ├── Controllers
 │   └── FundamentalController
@@ -438,7 +436,7 @@ PortfolioModule
 
 #### 核心算法: 健康度评分 (5 点制)
 
-```javascript
+```typescript
 // 伪代码
 function calculateHealthScore(financials: FinancialMetrics): HealthScore {
   // 1. 标准化各指标到 0-10 分
@@ -603,7 +601,7 @@ CREATE TABLE fundamental_history (
 
 #### 功能模块结构
 
-```
+```plaintext
 AlertModule
 ├── Controllers
 │   └── AlertController
@@ -628,7 +626,7 @@ AlertModule
 
 #### 警示规则引擎设计
 
-```javascript
+```typescript
 // 警示规则匹配流程
 async function evaluateAlert(
   alert: Alert,
@@ -755,7 +753,7 @@ CREATE TABLE alert_triggers (
 
 #### 推送服务集成
 
-```javascript
+```typescript
 // 多渠道推送
 async function pushNotification(
   user_id: string,
@@ -796,7 +794,7 @@ async function pushNotification(
 
 #### 功能模块结构
 
-```
+```plaintext
 NewsModule
 ├── Controllers
 │   └── NewsController
@@ -822,14 +820,14 @@ NewsModule
 
 #### 新闻爬虫与处理流程
 
-```
+```plaintext
 新闻源 → 爬虫采集 → 去重检查 → 数据清洗 → NLP 处理 → 存储 → 个性化排序 → 推送
          (Scrapy)   (URL Hash)  (HTML解析)  (分词/摘要)  (DB)
 ```
 
 #### 核心算法: 新闻排序与个性化
 
-```javascript
+```typescript
 async function getPersonalizedNewsFeed(
   user_id: string,
   limit: number = 20
@@ -936,7 +934,7 @@ CREATE TABLE user_news_reads (
 
 #### AI 摘要集成 (初版)
 
-```javascript
+```typescript
 // 使用第三方 LLM API 生成摘要
 async function generateNewsSummary(news: News): Promise<string> {
 
@@ -975,7 +973,7 @@ async function generateNewsSummary(news: News): Promise<string> {
 
 #### 功能模块结构
 
-```
+```plaintext
 DashboardModule
 ├── Controllers
 │   └── DashboardController
@@ -1111,7 +1109,7 @@ CREATE TABLE dashboard_templates (
 
 ### 核心数据模型
 
-```
+```plaintext
 Users (用户)
   ├─ id: BIGINT (PK)
   ├─ phone: VARCHAR (UK)
@@ -1171,7 +1169,7 @@ Dashboards (仪表板)
 
 ### Redis 缓存策略
 
-```
+```plaintext
 缓存键命名规范:
 
 1. 实时行情 (30 秒过期)
@@ -1348,7 +1346,7 @@ GET /dashboards/templates
 
 ### 项目结构
 
-```
+```plaintext
 nexvest-web/
 ├── src/
 │   ├── components/

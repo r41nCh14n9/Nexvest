@@ -46,44 +46,28 @@ flowchart TD
 
 下方為一個簡易範例（示意用途，依你使用的 Harness 版本與 schema 可能要做少量調整）：
 
-````yaml
+```yaml
 # pipelines/hello-world-pipeline.yaml
 pipeline:
   name: Hello World Pipeline
   identifier: hello_world_pipeline
   stages:
-    ## 前置需求
-
-    ### 帳號與權限
-
-    - 已有 Harness 帳號或存取權限（UI 或 API/CLI），能在指定 Project 建立 Connector / GitOps 應用
-    - 有一個 Git repository（GitHub/GitLab/Bitbucket），且你對該 repo 有 `push` 權限
-    - 若要部署到 Kubernetes，需有對目標 cluster 的存取權限（kubeconfig 或相等憑證）
-
-    ### 必要工具（下載與安裝）
-
-    - Git：用於版本控制與 push/pull（檢查：`git --version`）
-    - Docker Desktop：提供容器環境；若使用 `kind`，必須安裝並啟動 Docker（檢查：`docker --version` / `docker info`）
-    - kubectl：Kubernetes CLI（檢查：`kubectl version --client`）
-    - Helm：用於安裝 GitOps Agent 或其他 chart（檢查：`helm version --client`）
-    - kind 或 minikube：本地建立測試 k8s cluster（選其一，檢查：`kind --version` 或 `minikube version`）
-    - (選用) VS Code：編輯器與整合終端，建議安裝 `GitLens` 與 `YAML` 外掛
-
-    常見安裝方式（Windows 範例）
-
-    ```powershell
-            steps:
-              - step:
-                  type: ShellScript
-                  name: Print Hello
-                  identifier: print_hello
-                  spec:
-                    shell: Bash
-                    onDelegate: true
-                    command: |
-                      echo "Hello from Harness!"
-
-````
+    - name: Hello World Stage
+      identifier: hello_world_stage
+      type: Custom
+      spec:
+        execution:
+          steps:
+            - step:
+                type: ShellScript
+                name: Print Hello
+                identifier: print_hello
+                spec:
+                  shell: Bash
+                  onDelegate: true
+                  command: |
+                    echo "Hello from Harness!"
+```
 
     ### 前置作業（建議步驟）
 

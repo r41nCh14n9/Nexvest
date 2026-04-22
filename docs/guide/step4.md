@@ -19,7 +19,7 @@
 
 ## 範例：專案目錄與基本測試
 
-```
+```text
 my-service/
   ├─ src/
   │   └─ app.py

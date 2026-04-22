@@ -374,7 +374,7 @@ export class FundamentalController {
 
 **实现方案**:
 
-```
+```plaintext
 行情源 (WebSocket)
   ↓
 WebSocket Adapter
@@ -467,7 +467,7 @@ class AlertEngineService {
 
 **多渠道推送流程**:
 
-```
+```plaintext
 AlertTrigger 触发
   ├─ 应用内通知 (实时 Push)
   ├─ APNs 推送 (iOS)
@@ -558,7 +558,7 @@ GET    /alerts/:id/triggers      // 获取触发历史
 
 **爬虫架构**:
 
-```
+```plaintext
 新闻源 (多个 URL)
   ↓
 Scraper (数据提取)
@@ -925,19 +925,19 @@ spec:
 
 ### 后端团队 (3 人)
 
-**后端负责人 (财报模块)**
+#### 后端负责人 (财报模块)
 
 - 职责: FundamentalService 核心实现、指标计算、缓存策略
 - 时间: 42 天
 - 关键任务: 健康度评分算法、同业对标、API 设计
 
-**后端工程师 A (警示模块)**
+#### 后端工程师 A (警示模块)
 
 - 职责: 警示规则引擎、推送服务、AI 摘要集成
 - 时间: 42 天
 - 关键任务: 规则树评估、LLM 集成、推送可靠性
 
-**后端工程师 B (基础设施)**
+#### 后端工程师 B (基础设施)
 
 - 职责: 数据库、认证、实时数据流、新闻爬虫
 - 时间: 42 天
@@ -945,13 +945,13 @@ spec:
 
 ### 前端团队 (2 人)
 
-**前端工程师 A (PC Web)**
+#### 前端工程师 A (PC Web)
 
 - 职责: 财报组件、新闻组件、仪表板
 - 时间: 42 天
 - 关键任务: ECharts 集成、响应式设计、性能优化
 
-**前端工程师 B (移动端 / UI 通用)**
+#### 前端工程师 B (移动端 / UI 通用)
 
 - 职责: 移动端适配、深色模式、通用组件
 - 时间: 42 天
@@ -1034,7 +1034,7 @@ spec:
 
 **分支规范**:
 
-```
+```plaintext
 main (主分支，保护)
   ├─ develop (开发分支)
   │   ├─ feature/p1-fundamental (功能分支)
@@ -1045,7 +1045,7 @@ main (主分支，保护)
 
 **Commit 规范** (Conventional Commits):
 
-```
+```plaintext
 <type>(<scope>): <subject>
 
 feat(fundamental): 添加财报健康度评分计算
@@ -1132,7 +1132,7 @@ interface ApiResponse<T> {
 
 **错误代码定义**:
 
-```
+```plaintext
 200 - 成功
 400 - 请求参数错误
 401 - 认证失败
@@ -1316,7 +1316,7 @@ export default function () {
 
 ### 部署流程
 
-```
+```plaintext
 开发完成
   ↓
 Push 到 develop 分支
