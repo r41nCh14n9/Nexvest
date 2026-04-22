@@ -3,8 +3,8 @@
 This is a lightweight, importable stub demonstrating how to detect simple
 prompt/response loops using a short-term history fingerprint.
 """
-from typing import List
 import hashlib
+from typing import List
 
 
 class LoopDetector:

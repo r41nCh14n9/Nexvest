@@ -4,12 +4,7 @@ This is a tiny Flask app exposing /metrics for Prometheus to scrape.
 It is a minimal example — in production use a proper WSGI server.
 """
 from flask import Flask, Response
-from prometheus_client import (
-    Counter,
-    Gauge,
-    generate_latest,
-    CONTENT_TYPE_LATEST,
-)
+from prometheus_client import CONTENT_TYPE_LATEST, Counter, Gauge, generate_latest
 
 app = Flask(__name__)
 
