@@ -18,12 +18,9 @@
 
 ## 目錄
 
-1. [任務分解詳表](#任務分解詳表)
-2. [團隊角色與職責](#團隊角色與職責)
-3. [技術決策矩陣](#技術決策矩陣)
-4. [開發規範與最佳實踐](#開發規範與最佳實踐)
-5. [測試策略](#測試策略)
-6. [部署與上線計劃](#部署與上線計劃)
+1. [任务分解详表](#任务分解详表)
+2. [团队角色与职责](#团队角色与职责)
+3. [测试策略](#测试策略)
 
 ---
 
@@ -64,7 +61,7 @@ WHERE schemaname = 'public';
 -- 性能基准测试
 EXPLAIN ANALYZE SELECT * FROM financial_metrics
 WHERE symbol = '2330' ORDER BY report_date DESC LIMIT 10;
-```
+```text
 
 ---
 
@@ -119,7 +116,7 @@ nexvest-api/
 ├── .github/workflows/
 ├── package.json
 └── tsconfig.json
-```
+```text
 
 **完成标准**:
 
@@ -164,7 +161,7 @@ POST /auth/logout
 
 GET /auth/profile
   Response: {user_id, phone, real_name, created_at}
-```
+```text
 
 **完成标准**:
 
@@ -242,7 +239,7 @@ class FundamentalService {
   // 预警检测
   async detectWarnings(symbol: string): Promise<WarningIndicator[]>;
 }
-```
+```text
 
 **完成标准**:
 
@@ -289,7 +286,7 @@ export class FundamentalController {
     @Query('peer_symbols') peerSymbols?: string
   ): Promise<ComparisonResponse>
 }
-```
+```text
 
 **完成标准**:
 
@@ -386,7 +383,7 @@ Redis Cache
 发布事件到 Kafka / Redis Pub/Sub
   ↓
 Alert Engine 订阅处理
-```
+```text
 
 **完成标准**:
 
@@ -434,7 +431,7 @@ class AlertEngineService {
     context: EvaluationContext,
   ): boolean;
 }
-```
+```text
 
 **测试覆盖**:
 
@@ -473,7 +470,7 @@ AlertTrigger 触发
   ├─ APNs 推送 (iOS)
   ├─ FCM 推送 (Android)
   └─ 异步 Email
-```
+```text
 
 **完成标准**:
 
@@ -505,7 +502,7 @@ PUT    /alerts/:id               // 更新警示
 DELETE /alerts/:id               // 删除警示
 GET    /alerts/templates         // 获取预设模板
 GET    /alerts/:id/triggers      // 获取触发历史
-```
+```text
 
 **完成标准**:
 
@@ -568,7 +565,7 @@ Scraper (数据提取)
 验证 (字段检查)
   ↓
 存储到 MongoDB / PostgreSQL
-```
+```text
 
 **数据质量检查**:
 
@@ -614,7 +611,7 @@ Scraper (数据提取)
     }
   }
 }
-```
+```text
 
 **查询示例**:
 
@@ -634,7 +631,7 @@ GET /news/search
   },
   "sort": [{"published_at": {"order": "desc"}}]
 }
-```
+```text
 
 **完成标准**:
 
@@ -676,7 +673,7 @@ class SummarizationService {
     return summary;
   }
 }
-```
+```text
 
 **完成标准**:
 
@@ -861,7 +858,7 @@ spec:
               port: 3000
             initialDelaySeconds: 30
             periodSeconds: 10
-```
+```text
 
 **完成标准**:
 
@@ -1041,7 +1038,7 @@ main (主分支，保护)
   │   ├─ feature/p1-alert
   │   ├─ fix/critical-bug
   │   └─ release/v1.0.0 (发布分支)
-```
+```text
 
 **Commit 规范** (Conventional Commits):
 
@@ -1054,7 +1051,7 @@ docs(api): 更新 API 文档
 refactor(core): 重构服务依赖注入
 test(unit): 添加 FundamentalService 单元测试
 chore(deps): 升级 nestjs 版本
-```
+```text
 
 **Pull Request 规范**:
 
@@ -1078,7 +1075,7 @@ chore(deps): 升级 nestjs 版本
     "forceConsistentCasingInFileNames": true
   }
 }
-```
+```text
 
 **ESLint 规则**:
 
@@ -1097,7 +1094,7 @@ module.exports = {
     "@typescript-eslint/no-unused-vars": "error",
   },
 };
-```
+```text
 
 **测试覆盖率目标**:
 
@@ -1128,7 +1125,7 @@ interface ApiResponse<T> {
   errors?: Array<{ field: string; message: string }>;
   timestamp: string;
 }
-```
+```text
 
 **错误代码定义**:
 
@@ -1142,19 +1139,19 @@ interface ApiResponse<T> {
 429 - 请求过于频繁
 500 - 服务器错误
 503 - 服务暂时不可用
-```
+```text
 
 ### 日志规范
 
 **日志级别**:
 
-```
+```text
 DEBUG - 开发调试信息
 INFO  - 关键业务事件 (登录、创建警示等)
 WARN  - 警告级别 (缓存失败、降级处理)
 ERROR - 错误事件 (需要人工干预)
 FATAL - 致命错误 (应立即告警)
-```
+```text
 
 **日志示例**:
 
@@ -1166,7 +1163,7 @@ this.logger.info("Alert triggered", {
   timestamp: new Date(),
   triggerValue: marketData.price,
 });
-```
+```text
 
 ---
 
@@ -1205,7 +1202,7 @@ describe("FundamentalService", () => {
     expect(score.level).toBe("green");
   });
 });
-```
+```text
 
 ### 集成测试
 
@@ -1235,7 +1232,7 @@ describe("Fundamental API (e2e)", () => {
       });
   });
 });
-```
+```text
 
 ### E2E 测试
 
@@ -1268,7 +1265,7 @@ describe("Stock Detail Flow", () => {
     cy.get(".success-message").should("contain", "警示创建成功");
   });
 });
-```
+```text
 
 ### 性能测试
 
@@ -1298,7 +1295,7 @@ export default function () {
     "response time < 200ms": (r) => r.timings.duration < 200,
   });
 }
-```
+```text
 
 ---
 
@@ -1354,7 +1351,7 @@ GitHub Actions
   ├─ 用户反馈
   ↓
 成功 ✓ / 失败 ✗ (回滚到 Blue)
-```
+```text
 
 ### 发布检查清单
 
