@@ -1,0 +1,21 @@
+apiVersion: v2
+name: nexvest-ai-inference
+description: Ollama AI Inference Service for Nexvest AI-Driven CI/CD
+type: application
+version: 0.1.0
+appVersion: "0.1.0"
+
+keywords:
+  - ollama
+  - ai
+  - inference
+  - llama2
+  - machine-learning
+
+home: https://ollama.ai
+sources:
+  - https://github.com/ollama/ollama
+
+maintainers:
+  - name: Nexvest Team
+    email: team@nexvest.local

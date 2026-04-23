@@ -1,0 +1,209 @@
+# AI 驱动的 Harness 门控配置
+# 支持动态调整权重和阈值，无需改代码
+
+# ==========================================
+# 风险评分配置
+# ==========================================
+risk_assessment:
+  # 权重配置（必须加总为 1.0）
+  # 可根据项目特性动态调整
+  weights:
+    code_quality: 0.50        # 代码质量权重：测试覆盖率、格式化等
+    entropy_safety: 0.30      # 熵安全权重：系统混乱度变化
+    loop_safety: 0.20         # 循环安全权重：代理陷入循环的风险
+
+  # 风险等级定义（0-1 分数）
+  risk_levels:
+    critical:
+      threshold: 0.95
+      description: "极度危险，必须阻止"
+      action: "error"
+
+    high:
+      threshold: 0.75
+      description: "高风险，需要修改"
+      action: "error"
+
+    medium:
+      threshold: 0.50
+      description: "中等风险，建议关注"
+      action: "warning"
+
+    low:
+      threshold: 0.25
+      description: "低风险，可接受"
+      action: "info"
+
+  # ==========================================
+  # 初期的可接受风险程度
+  # acceptable_risk_level = "high"：
+  #   - CRITICAL 和 HIGH 风险 → error（阻止提交）
+  #   - MEDIUM 和 LOW 风险 → warning（仅提示）
+  #
+  # 后期可改为 "medium"（更严格）：
+  #   - CRITICAL、HIGH、MEDIUM 风险 → error
+  #   - LOW 风险 → warning
+  # ==========================================
+  acceptable_risk_level: "high"
+
+  # 风险分数计算公式（当前）
+  # score = w1 × code_quality_score + w2 × entropy_score + w3 × loop_score
+  # 其中每个子分数都在 0-1 之间
+
+# ==========================================
+# 代码质量评分规则
+# ==========================================
+code_quality:
+  # 测试覆盖率要求
+  test_coverage:
+    minimum: 0.70             # 最小 70% 覆盖率
+    ideal: 0.85               # 理想 85% 覆盖率
+
+  # Black 代码格式化
+  black_check:
+    required: true
+    line_length: 100
+
+  # Flake8 代码检查
+  flake8_check:
+    required: true
+    max_errors: 0             # 不允许任何错误
+
+  # isort import 排序
+  isort_check:
+    required: true
+    profile: "black"
+
+  # 分数计算
+  scoring:
+    coverage_>=_ideal: 1.0    # 100% 分
+    coverage_ideal: 0.9        # 理想覆盖率
+    coverage_minimum: 0.7      # 最低可接受
+    coverage_below_minimum: 0.0
+    lint_errors_penalty: 0.1   # 每个 lint 错误扣 10%
+
+# ==========================================
+# 熵安全评分规则
+# ==========================================
+entropy_safety:
+  # 允许的熵增加范围
+  max_entropy_increase: 0.15   # 相对原始代码最多增加 15%
+
+  # 熵的来源
+  sources:
+    - "code_complexity"        # 代码复杂度
+    - "loop_nesting"           # 循环嵌套深度
+    - "branching_factor"       # 分支因子
+    - "exception_handlers"     # 异常处理数
+
+  # 分数计算
+  scoring:
+    entropy_increase_0_to_5: 1.0   # 熵增 0-5%：满分
+    entropy_increase_5_to_15: 0.7  # 熵增 5-15%：70%
+    entropy_increase_15_plus: 0.3  # 熵增 15%+：30%
+    trend_improving: 1.0           # 过去 7 天趋势改善：额外加分
+
+# ==========================================
+# 循环安全评分规则
+# ==========================================
+loop_safety:
+  # 允许的循环检测警告
+  allowed_warnings: 2           # 最多允许 2 次警告
+  max_call_depth: 10            # 最大调用深度
+  max_recursion_depth: 5        # 最大递归深度
+
+  # 分数计算
+  scoring:
+    no_loop_risk: 1.0           # 无循环风险：满分
+    loop_warnings_1_to_2: 0.8   # 1-2 个警告：80%
+    loop_warnings_3_plus: 0.3   # 3+ 个警告：30%
+    recent_fix: 1.0             # 最近 7 天内修复过：额外加分
+
+# ==========================================
+# 升级决策配置
+# ==========================================
+escalation:
+  # 是否启用 AI 分析
+  enable_ai_analysis: true
+
+  # 数据回溯时间
+  look_back_hours: 24
+
+  # 是否分析时间序列趋势
+  enable_time_series: true
+
+  # 是否分析关联信号
+  enable_correlation: true
+
+  # 升级规则
+  rules:
+    critical:
+      p_level: "P1"
+      description: "立即升级"
+      auto_action: true         # 自动执行建议的修复
+      notify_channels: ["#nexvest-critical"]
+      escalate_to: ["on_call_engineer", "team_lead"]
+
+    high:
+      p_level: "P1"
+      description: "立即升级，通知值班人员"
+      auto_action: false
+      notify_channels: ["#nexvest-critical"]
+      escalate_to: ["on_call_engineer"]
+
+    medium:
+      p_level: "P2"
+      description: "30 分钟内响应"
+      auto_action: false
+      notify_channels: ["#nexvest-warnings"]
+      escalate_to: []
+
+    low:
+      p_level: "P3"
+      description: "1 小时内处理"
+      auto_action: false
+      notify_channels: ["#nexvest-warnings"]
+      escalate_to: []
+
+# ==========================================
+# 部署决策配置
+# ==========================================
+deployment:
+  # 部署安全评分维度
+  dimensions:
+    entropy_stability: 0.30      # 熵稳定性（30%）
+    error_rate: 0.30             # 错误率（30%）
+    loop_safety: 0.20            # 循环安全（20%）
+    test_coverage: 0.15          # 测试覆盖（15%）
+    code_quality: 0.05           # 代码质量（5%）
+
+  # 部署安全阈值
+  safe_threshold: 0.85           # 分数 >= 0.85 可以部署
+
+  # 分阶段部署
+  staging_threshold: 0.70        # 分数 0.70-0.85 部署到 staging
+  staging_monitoring_duration: 3600  # 在 staging 监控 1 小时
+
+  # 自动回滚规则
+  auto_rollback:
+    enabled: true
+    error_rate_threshold: 0.02   # error_rate > 2% 自动回滚
+    entropy_spike_threshold: 0.2 # 熵增加 > 20% 自动回滚
+
+# ==========================================
+# 告警聚合和去重
+# ==========================================
+alert_aggregation:
+  enabled: true
+  dedup_window_seconds: 300      # 5 分钟内的相同告警只发送一次
+  aggregation_window_seconds: 60 # 1 分钟内的相同类别告警聚合发送
+  max_alerts_per_minute: 10      # 每分钟最多 10 条告警
+
+# ==========================================
+# 调试和日志
+# ==========================================
+debug:
+  verbose: false                 # 详细日志
+  save_analysis_reports: true    # 保存分析报告到文件
+  report_output_dir: "./reports/ai_analysis"
+  keep_report_days: 7            # 保留 7 天的报告

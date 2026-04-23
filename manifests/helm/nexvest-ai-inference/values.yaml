@@ -1,0 +1,117 @@
+# 默认 Helm 配置值
+# 可通过 --set 参数或 values-prod.yaml 覆盖
+
+replicaCount: 1
+
+image:
+  repository: ollama/ollama
+  pullPolicy: IfNotPresent
+  tag: "latest"  # 或指定具体版本 "0.1.7" 等
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  create: true
+  annotations: {}
+  name: ""
+
+podAnnotations: {}
+
+podSecurityContext: {}
+
+securityContext: {}
+
+service:
+  type: ClusterIP
+  port: 8000              # K8s Service 外部端口
+  targetPort: 11434       # Ollama 内部端口
+  name: nexvest-ai-inference
+  annotations: {}
+
+ingress:
+  enabled: false          # 如需通过 Ingress 暴露，改为 true
+  className: ""
+  annotations: {}
+  hosts:
+    - host: ai-inference.example.com
+      paths:
+        - path: /
+          pathType: Prefix
+  tls: []
+
+# 资源限制和申请
+resources:
+  limits:
+    cpu: "4"
+    memory: "16Gi"
+  requests:
+    cpu: "2"
+    memory: "8Gi"
+
+# Pod 自动扩展（当前不支持，因为 GPU 资源有限）
+autoscaling:
+  enabled: false
+
+# 持久存储配置
+persistence:
+  enabled: true
+  accessMode: ReadWriteOnce
+  size: 15Gi              # 模型大小约 4-8GB + 缓存空间
+  storageClassName: ""    # 使用默认 StorageClass，或指定特定类（如 "fast-ssd"）
+  mountPath: /root/.ollama
+
+# 模型配置
+model:
+  name: "llama2:7b"       # 推荐：llama2:7b（性能和精度平衡）
+                          # 替代：llama2:13b（精度更高，需要更多资源）
+  pullOnStart: true       # 启动时自动下载模型
+
+# 环境变量配置
+env:
+  - name: OLLAMA_NUM_THREADS
+    value: "4"            # 线程数，根据 CPU 数调整
+  - name: OLLAMA_KEEP_ALIVE
+    value: "5m"           # 模型在内存中保留时间
+
+# 健康检查
+livenessProbe:
+  httpGet:
+    path: /api/tags
+    port: 11434
+  initialDelaySeconds: 60 # 启动后 60 秒开始检查
+  periodSeconds: 30
+  timeoutSeconds: 5
+  failureThreshold: 3
+
+readinessProbe:
+  httpGet:
+    path: /api/tags
+    port: 11434
+  initialDelaySeconds: 30
+  periodSeconds: 10
+  timeoutSeconds: 5
+  failureThreshold: 2
+
+# 节点亲和性配置（可选）
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+# Pod 中断预算（PDB）
+podDisruptionBudget:
+  enabled: false
+  minAvailable: 0
+
+# 日志输出级别
+logging:
+  level: "info"           # debug, info, warning, error
+
+# 监控和指标导出（可选）
+prometheus:
+  enabled: false          # 后期启用 Prometheus 时改为 true
+  port: 9090
+  path: /metrics

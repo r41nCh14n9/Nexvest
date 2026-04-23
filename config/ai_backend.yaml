@@ -1,0 +1,76 @@
+# AI 后端配置（支持动态切换）
+# 初期：本地 Ollama 推理
+# 后期：可改为 OpenAI/Azure（无需改应用代码）
+
+backend:
+  # 当前活跃的后端
+  active_provider: "ollama"  # 选项: "ollama", "openai", "azure", "local"
+
+  # ==========================================
+  # Ollama 本地推理配置
+  # ==========================================
+  ollama:
+    # 本地部署
+    endpoint: "http://localhost:11434"
+
+    # K8s 部署（如果 AI Service 在 K8s 的 nexvest-ai namespace）
+    # endpoint: "http://nexvest-ai-inference.nexvest-ai.svc.cluster.local:8000"
+
+    model: "llama2:7b"
+    timeout: 30              # 单次请求超时（秒）
+    max_retries: 2           # 失败重试次数
+    temperature: 0.3         # 生成温度 (0-1, 越低越确定性强)
+    keep_alive: "5m"         # 模型在内存中保留时间
+
+  # ==========================================
+  # OpenAI 配置（未来升级用）
+  # ==========================================
+  openai:
+    api_key: "${OPENAI_API_KEY}"  # 从环境变量读取：export OPENAI_API_KEY=sk-...
+    model: "gpt-4"
+    base_url: "https://api.openai.com/v1"
+    timeout: 30
+    temperature: 0.3
+
+  # ==========================================
+  # Azure OpenAI 配置（未来升级用）
+  # ==========================================
+  azure:
+    api_key: "${AZURE_OPENAI_KEY}"
+    endpoint: "${AZURE_OPENAI_ENDPOINT}"
+    deployment_name: "nexvest-ai"
+    api_version: "2024-02-01"
+    timeout: 30
+    temperature: 0.3
+
+# ==========================================
+# 备份配置（提高可用性）
+# ==========================================
+fallback_enabled: false       # 如果为 true，主提供商失败时自动切换
+fallback_provider: "openai"   # 备份提供商
+
+# ==========================================
+# 缓存配置（性能优化）
+# ==========================================
+cache:
+  enabled: true
+  type: "memory"              # 选项: "memory", "redis"（暂未实现 redis）
+  ttl_seconds: 3600           # 缓存过期时间
+  max_size_mb: 100            # 最大缓存大小
+
+# ==========================================
+# 日志配置
+# ==========================================
+logging:
+  level: "INFO"               # DEBUG, INFO, WARNING, ERROR
+  format: "json"              # json 或 text
+  enable_request_logging: true
+  enable_response_logging: false  # 注意：响应可能包含敏感信息
+
+# ==========================================
+# 限流配置（防止过载）
+# ==========================================
+rate_limiting:
+  enabled: true
+  requests_per_minute: 60     # 每分钟最多请求数
+  burst_size: 10              # 突发请求允许数
